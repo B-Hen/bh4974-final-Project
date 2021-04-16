@@ -14,13 +14,14 @@ const makerPage = (req, res) => {
 };
 
 const makeDomo = (req, res) => {
-  if (!req.body.name || !req.body.age) {
-    return res.status(400).json({ error: 'RAWR! Both name and age are required' });
+  if (!req.body.name || !req.body.age || !req.body.level) {
+    return res.status(400).json({ error: 'RAWR! Name, age, and level are required' });
   }
 
   const domoData = {
     name: req.body.name,
     age: req.body.age,
+    level: req.body.level,
     owner: req.session.account._id,
   };
 
@@ -56,7 +57,53 @@ const getDomos = (request, response) => {
   });
 };
 
+const deleteDomos = (request, response) => {
+  const req = request;
+  const res = response;
+
+  return Domo.DomoModel.findAndDelete(req.body.domoId, (err) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    return res.json({ message: 'DeleteDomo' });
+  });
+};
+
 
 module.exports.makerPage = makerPage;
 module.exports.getDomos = getDomos;
+module.exports.deleteDomos = deleteDomos;
 module.exports.make = makeDomo;
+
+
+/*
+  return Domo.DomoModel.findByOwner(req.session.account._id, (err, docs) => {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ error: 'An error occured' });
+    }
+
+    let domos = docs;
+    let index;
+    let domosID;
+    let requestID;
+
+    for(let i = 0; i < domos.length; i++)
+    {
+      //Turn to string to do a proper comparison
+      domosID = String(domos[i]._id).trim();
+      requestID = String(req.body.domoId).trim();
+
+      //check to see if the IDs match
+      if(domosID === requestID)
+      {
+        index = i;
+      }
+    }
+    Domo.DomoModel.findAndDelete(domosID);
+    return res.status(200).json({messahge: 'Deleted Domo'});
+  });
+
+*/

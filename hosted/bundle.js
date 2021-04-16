@@ -6,7 +6,7 @@ var handleDomo = function handleDomo(e) {
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
+  if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoLevel").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
   }
@@ -15,6 +15,33 @@ var handleDomo = function handleDomo(e) {
     loadDomosFromServer();
   });
   return false;
+};
+
+var handleDeleteDomo = function handleDeleteDomo(e) {
+  e.preventDefault();
+  var csrf = document.querySelector('input[name="_csrf"]').value;
+  var id = e.currentTarget.getAttribute('name'); //console.log(id);
+  //console.log(csrf);
+
+  var deleteData = "_csrf=".concat(csrf, "&domoId=").concat(id); //console.log(deleteData);
+
+  sendAjax('POST', $("#domoDelete").attr("action"), deleteData, function () {
+    loadDomosFromServer();
+  });
+  return false;
+};
+
+var DeleteButton = function DeleteButton(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "domoDelete",
+      onClick: handleDeleteDomo,
+      name: props,
+      action: "/deleteDomo",
+      method: "POST",
+      className: "domoDelete",
+      key: ""
+    }, "Delete Domo")
+  );
 };
 
 var DomoForm = function DomoForm(props) {
@@ -39,6 +66,13 @@ var DomoForm = function DomoForm(props) {
       type: "text",
       name: "age",
       placeholder: "Domo Age"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "level"
+    }, "Level: "), /*#__PURE__*/React.createElement("input", {
+      id: "domoLevel",
+      type: "text",
+      name: "level",
+      placeholder: "Domo Level"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -73,7 +107,9 @@ var DomoList = function DomoList(props) {
         className: "domoName"
       }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
         className: "domoAge"
-      }, " Age: ", domo.age, " "))
+      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "domoLevel"
+      }, " Level: ", domo.level, " "), DeleteButton(domo._id))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {

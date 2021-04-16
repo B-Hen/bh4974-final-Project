@@ -3,7 +3,7 @@ const handleDomo = (e) => {
 
     $("#domoMessage").animate({width:'hide'},350);
 
-    if($("#domoName").val() == '' || $("#domoAge").val() == '') {
+    if($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoLevel").val() == '') {
         handleError("RAWR! All fields are required");
         return false;
     }
@@ -14,6 +14,36 @@ const handleDomo = (e) => {
 
     return false;
 };
+
+const handleDeleteDomo = (e) => {
+    e.preventDefault();
+
+    const csrf = document.querySelector('input[name="_csrf"]').value;
+    const id = e.currentTarget.getAttribute('name');
+    //console.log(id);
+    //console.log(csrf);
+    const deleteData = `_csrf=${csrf}&domoId=${id}`;
+    //console.log(deleteData);
+
+    sendAjax('POST', $("#domoDelete").attr("action"), deleteData, function() {
+        loadDomosFromServer();
+    });
+
+    return false;
+}
+
+const DeleteButton = (props) => {
+    return (
+        <button id="domoDelete"
+        onClick={handleDeleteDomo}
+        name={props}
+        action="/deleteDomo"
+        method="POST"
+        className="domoDelete"
+        key=""
+        >Delete Domo</button>
+    )
+}
 
 const DomoForm = (props) => {
     return (
@@ -28,6 +58,8 @@ const DomoForm = (props) => {
             <input id="domoName" type="text" name="name" placeholder="Domo Name" />
             <label htmlFor="age">Age: </label>
             <input id="domoAge" type="text" name="age" placeholder="Domo Age" />
+            <label htmlFor="level">Level: </label>
+            <input id="domoLevel" type="text" name="level" placeholder="Domo Level" />
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="makeDomoSubmit" type="submit" value="Make Domo" />
 
@@ -50,13 +82,15 @@ const DomoList = function(props) {
                 <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
                 <h3 className="domoName"> Name: {domo.name} </h3>
                 <h3 className="domoAge"> Age: {domo.age} </h3>
+                <h3 className="domoLevel"> Level: {domo.level} </h3>
+                {DeleteButton(domo._id)}
             </div>
         );
     });
 
     return (
         <div className="domoList">
-            {domoNodes}
+            {domoNodes}      
         </div>
     );
 };
