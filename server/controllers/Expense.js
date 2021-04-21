@@ -18,15 +18,21 @@ const makeExpense = (req, res) => {
     return res.status(400).json({ error: 'Item, cost, type, and necessary is all required!' });
   }
 
+  let necessaryBool;
+
+  if (req.body.necessary === 'true') {
+    necessaryBool = true;
+  } else if (req.body.necessary === 'false') {
+    necessaryBool = false;
+  }
+
   const ExpenseData = {
     item: req.body.item,
     cost: Number(req.body.cost),
     type: req.body.type,
-    necessary: Boolean(req.body.necessary),
+    necessary: necessaryBool,
     owner: req.session.account._id,
   };
-
-  console.log(ExpenseData);
 
   const newExpense = new Expense.ExpenseModel(ExpenseData);
 
@@ -64,7 +70,7 @@ const deleteExpense = (request, response) => {
   const req = request;
   const res = response;
 
-  return Expense.ExpenseModel.findAndDelete(req.body.ExpenseId, (err) => {
+  return Expense.ExpenseModel.findAndDelete(req.body.expenseId, (err) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: 'An error occured' });

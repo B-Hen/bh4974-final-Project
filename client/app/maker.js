@@ -1,20 +1,3 @@
-const handleDomo = (e) => {
-    e.preventDefault();
-
-    $("#domoMessage").animate({width:'hide'},350);
-
-    if($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoLevel").val() == '') {
-        handleError("RAWR! All fields are required");
-        return false;
-    }
-
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
-        loadDomosFromServer();
-    });
-
-    return false;
-};
-
 const handleBudget = (e) => {
     e.preventDefault();
 
@@ -24,10 +7,8 @@ const handleBudget = (e) => {
         handleError("Budget is required");
         return false;
     }
-    console.log($("#BudgetForm").serialize());
 
     sendAjax('POST', $("#BudgetForm").attr("action"), $("#BudgetForm").serialize(), function() {
-        console.log("worked check mongo Compass");
         loadBudgetFromServer();
     });
 
@@ -44,63 +25,42 @@ const handleExpense = (e) => {
         return false;
     }
 
-    console.log($("#expenseForm").serialize());
     sendAjax('POST', $("#expenseForm").attr("action"), $("#expenseForm").serialize(), function() {
-        console.log("check mongo");
+        loadExpenseFromServer();
     });
 
     return false;
 };
 
-const handleDeleteDomo = (e) => {
+const handleDeleteBudget = (e) => {
     e.preventDefault();
 
     const csrf = document.querySelector('input[name="_csrf"]').value;
     const id = e.currentTarget.getAttribute('name');
 
-    const deleteData = `_csrf=${csrf}&domoId=${id}`;
+    const deleteData = `_csrf=${csrf}&budgetId=${id}`;
 
-    sendAjax('POST', $("#domoDelete").attr("action"), deleteData, function() {
-        loadDomosFromServer();
+    sendAjax('POST', $("#budgetDelete").attr("action"), deleteData, function() {
+        loadBudgetFromServer();
     });
 
     return false;
 }
 
-const DeleteButton = (props) => {
-    return (
-        <button id="domoDelete"
-        onClick={handleDeleteDomo}
-        name={props}
-        action="/deleteDomo"
-        method="POST"
-        className="domoDelete"
-        key=""
-        >Delete Domo</button>
-    )
+const handleDeleteExpense = (e) => {
+    e.preventDefault();
+
+    const csrf = document.querySelector('input[name="_csrf"]').value;
+    const id = e.currentTarget.getAttribute('name');
+
+    const deleteData = `_csrf=${csrf}&expenseId=${id}`;
+
+    sendAjax('POST', $("#expenseDelete").attr("action"), deleteData, function() {
+        loadExpenseFromServer();
+    });
+
+    return false;
 }
-
-const DomoForm = (props) => {
-    return (
-        <form id="domoForm"
-        onSubmit={handleDomo}
-        name="domoForm"
-        action="/maker"
-        method="POST"
-        className="domoForm"
-        >
-            <label htmlFor="name">Name: </label>
-            <input id="domoName" type="text" name="name" placeholder="Domo Name" />
-            <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="text" name="age" placeholder="Domo Age" />
-            <label htmlFor="level">Level: </label>
-            <input id="domoLevel" type="text" name="level" placeholder="Domo Level" />
-            <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
-
-        </form>
-    );
-};
 
 const BudgetForm = (props) => {
     return (
@@ -118,6 +78,18 @@ const BudgetForm = (props) => {
         </form>
     );
 };
+
+const DeleteBudget = (props) => {
+    return (
+        <button id="budgetDelete"
+        onClick={handleDeleteBudget}
+        name={props}
+        action="/deleteBudget"
+        method="POST"
+        className="budgetDelete"
+        >Delete Budget</button>
+    )
+}
 
 const ExpenseForm = (props) => {
     return (
@@ -156,6 +128,18 @@ const ExpenseForm = (props) => {
     );
 };
 
+const DeleteExpense = (props) => {
+    return (
+        <button id="expenseDelete"
+        onClick={handleDeleteExpense}
+        name={props}
+        action="/deleteExpense"
+        method="POST"
+        className="expenseDelete"
+        >Delete Expense</button>
+    )
+}
+
 const DomoList = function(props) {
     if(props.domos.length === 0) {
         return (
@@ -193,10 +177,11 @@ const BudgetList = function(props) {
         );
     }
 
-    const budgetNodes = props.budgets.map(function(budget) {
+    const budgetNodes = props.budgets.map(function(budget) {        
         return (
             <div key={budget._id} className="budget">
                 <h3 className="budgetBudget"> Budget: {budget.budget} </h3>
+                {DeleteBudget(budget._id)}
             </div>
         );
     });
@@ -205,48 +190,84 @@ const BudgetList = function(props) {
         <div className="budgetList">
             {budgetNodes}      
         </div>
+
     );
 };
 
-const loadDomosFromServer = () => {
-    sendAjax('GET', '/getDomos', null, (data) => {
-        ReactDOM.render(
-            <DomoList domos={data.domos} />, document.querySelector("#domos")
+const ExpenseList = function(props) {
+    if(props.expenses.length === 0) {
+        return (
+            <div className="expenseList">
+                <h3 className="emptyExpense">No Expenses yet</h3>
+            </div>
+        );
+    }
+
+    const expenseNodes = props.expenses.map(function(expense) {  
+        let necessary;
+
+        if(expense.necessary)
+        {
+            necessary = "Yes";
+        }      
+        else if(!expense.necessary)
+        {
+            necessary = "No";
+        }
+        return (
+            <div key={expense._id} className="expense">
+                <h3 className="expenseItem"> Item: {expense.item} </h3>
+                <h3 className="expenseCost"> Cost: ${expense.cost} </h3>
+                <h3 className="expenseItem"> Type: {expense.type} </h3>
+                <h3 className="expenseItem"> Necessary: {necessary} </h3>
+                {DeleteExpense(expense._id)}
+            </div>
         );
     });
+
+    return (
+        <div className="expenseList">
+            {expenseNodes}      
+        </div>
+
+    );
 };
 
 const loadBudgetFromServer = () => {
     sendAjax('GET', '/getBudget', null, (data) => {
         ReactDOM.render(
-            <BudgetList budgets={data.budgets} />, document.querySelector("#budget")
+            <BudgetList budgets={data.budgets} />, document.querySelector("#budgets")
+        );
+    });
+};
+
+const loadExpenseFromServer = () => {
+    sendAjax('GET', '/getExpense', null, (data) => {
+        ReactDOM.render(
+            <ExpenseList expenses={data.expenses} />, document.querySelector("#expenses")
         );
     });
 };
 
 const setup = function(csrf) {
     ReactDOM.render(
-        <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+        <BudgetList budgets={[]} />, document.querySelector("#budgets")
     );
 
     ReactDOM.render(
-        <DomoList domos={[]} />, document.querySelector("#domos")
-    );
-
-    ReactDOM.render(
-        <BudgetList budgets={[]} />, document.querySelector("#budget")
+        <ExpenseList expenses={[]} />, document.querySelector("#expenses")
     );
 
     ReactDOM.render(
         <BudgetForm csrf={csrf} />, document.querySelector("#makeBudget")
     )
-
+    
     ReactDOM.render(
         <ExpenseForm csrf={csrf} />, document.querySelector("#makeExpense")
     )
 
     loadBudgetFromServer();
-    loadDomosFromServer();
+    loadExpenseFromServer();
 };
 
 const getToken = () => {

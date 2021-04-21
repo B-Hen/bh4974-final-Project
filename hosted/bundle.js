@@ -1,22 +1,5 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
-
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoLevel").val() == '') {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
-  });
-  return false;
-};
-
 var handleBudget = function handleBudget(e) {
   e.preventDefault();
   $("#domoMessage").animate({
@@ -28,9 +11,7 @@ var handleBudget = function handleBudget(e) {
     return false;
   }
 
-  console.log($("#BudgetForm").serialize());
   sendAjax('POST', $("#BudgetForm").attr("action"), $("#BudgetForm").serialize(), function () {
-    console.log("worked check mongo Compass");
     loadBudgetFromServer();
   });
   return false;
@@ -47,76 +28,32 @@ var handleExpense = function handleExpense(e) {
     return false;
   }
 
-  console.log($("#expenseForm").serialize());
   sendAjax('POST', $("#expenseForm").attr("action"), $("#expenseForm").serialize(), function () {
-    console.log("check mongo");
+    loadExpenseFromServer();
   });
   return false;
 };
 
-var handleDeleteDomo = function handleDeleteDomo(e) {
+var handleDeleteBudget = function handleDeleteBudget(e) {
   e.preventDefault();
   var csrf = document.querySelector('input[name="_csrf"]').value;
   var id = e.currentTarget.getAttribute('name');
-  var deleteData = "_csrf=".concat(csrf, "&domoId=").concat(id);
-  sendAjax('POST', $("#domoDelete").attr("action"), deleteData, function () {
-    loadDomosFromServer();
+  var deleteData = "_csrf=".concat(csrf, "&budgetId=").concat(id);
+  sendAjax('POST', $("#budgetDelete").attr("action"), deleteData, function () {
+    loadBudgetFromServer();
   });
   return false;
 };
 
-var DeleteButton = function DeleteButton(props) {
-  return (/*#__PURE__*/React.createElement("button", {
-      id: "domoDelete",
-      onClick: handleDeleteDomo,
-      name: props,
-      action: "/deleteDomo",
-      method: "POST",
-      className: "domoDelete",
-      key: ""
-    }, "Delete Domo")
-  );
-};
-
-var DomoForm = function DomoForm(props) {
-  return (/*#__PURE__*/React.createElement("form", {
-      id: "domoForm",
-      onSubmit: handleDomo,
-      name: "domoForm",
-      action: "/maker",
-      method: "POST",
-      className: "domoForm"
-    }, /*#__PURE__*/React.createElement("label", {
-      htmlFor: "name"
-    }, "Name: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoName",
-      type: "text",
-      name: "name",
-      placeholder: "Domo Name"
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "age"
-    }, "Age: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoAge",
-      type: "text",
-      name: "age",
-      placeholder: "Domo Age"
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "level"
-    }, "Level: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoLevel",
-      type: "text",
-      name: "level",
-      placeholder: "Domo Level"
-    }), /*#__PURE__*/React.createElement("input", {
-      type: "hidden",
-      name: "_csrf",
-      value: props.csrf
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "makeDomoSubmit",
-      type: "submit",
-      value: "Make Domo"
-    }))
-  );
+var handleDeleteExpense = function handleDeleteExpense(e) {
+  e.preventDefault();
+  var csrf = document.querySelector('input[name="_csrf"]').value;
+  var id = e.currentTarget.getAttribute('name');
+  var deleteData = "_csrf=".concat(csrf, "&expenseId=").concat(id);
+  sendAjax('POST', $("#expenseDelete").attr("action"), deleteData, function () {
+    loadExpenseFromServer();
+  });
+  return false;
 };
 
 var BudgetForm = function BudgetForm(props) {
@@ -144,6 +81,18 @@ var BudgetForm = function BudgetForm(props) {
       type: "submit",
       value: "Make Budget"
     }))
+  );
+};
+
+var DeleteBudget = function DeleteBudget(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "budgetDelete",
+      onClick: handleDeleteBudget,
+      name: props,
+      action: "/deleteBudget",
+      method: "POST",
+      className: "budgetDelete"
+    }, "Delete Budget")
   );
 };
 
@@ -215,6 +164,18 @@ var ExpenseForm = function ExpenseForm(props) {
   );
 };
 
+var DeleteExpense = function DeleteExpense(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "expenseDelete",
+      onClick: handleDeleteExpense,
+      name: props,
+      action: "/deleteExpense",
+      method: "POST",
+      className: "expenseDelete"
+    }, "Delete Expense")
+  );
+};
+
 var DomoList = function DomoList(props) {
   if (props.domos.length === 0) {
     return (/*#__PURE__*/React.createElement("div", {
@@ -264,7 +225,7 @@ var BudgetList = function BudgetList(props) {
         className: "budget"
       }, /*#__PURE__*/React.createElement("h3", {
         className: "budgetBudget"
-      }, " Budget: ", budget.budget, " "))
+      }, " Budget: ", budget.budget, " "), DeleteBudget(budget._id))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
@@ -273,32 +234,68 @@ var BudgetList = function BudgetList(props) {
   );
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+var ExpenseList = function ExpenseList(props) {
+  if (props.expenses.length === 0) {
+    return (/*#__PURE__*/React.createElement("div", {
+        className: "expenseList"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "emptyExpense"
+      }, "No Expenses yet"))
+    );
+  }
+
+  var expenseNodes = props.expenses.map(function (expense) {
+    var necessary;
+
+    if (expense.necessary) {
+      necessary = "Yes";
+    } else if (!expense.necessary) {
+      necessary = "No";
+    }
+
+    return (/*#__PURE__*/React.createElement("div", {
+        key: expense._id,
+        className: "expense"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "expenseItem"
+      }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "expenseCost"
+      }, " Cost: $", expense.cost, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "expenseItem"
+      }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "expenseItem"
+      }, " Necessary: ", necessary, " "), DeleteExpense(expense._id))
+    );
   });
+  return (/*#__PURE__*/React.createElement("div", {
+      className: "expenseList"
+    }, expenseNodes)
+  );
 };
 
 var loadBudgetFromServer = function loadBudgetFromServer() {
   sendAjax('GET', '/getBudget', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
       budgets: data.budgets
-    }), document.querySelector("#budget"));
+    }), document.querySelector("#budgets"));
+  });
+};
+
+var loadExpenseFromServer = function loadExpenseFromServer() {
+  sendAjax('GET', '/getExpense', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
+      expenses: data.expenses
+    }), document.querySelector("#expenses"));
   });
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
-    csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
-  }), document.querySelector("#domos"));
   ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
     budgets: []
-  }), document.querySelector("#budget"));
+  }), document.querySelector("#budgets"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
+    expenses: []
+  }), document.querySelector("#expenses"));
   ReactDOM.render( /*#__PURE__*/React.createElement(BudgetForm, {
     csrf: csrf
   }), document.querySelector("#makeBudget"));
@@ -306,7 +303,7 @@ var setup = function setup(csrf) {
     csrf: csrf
   }), document.querySelector("#makeExpense"));
   loadBudgetFromServer();
-  loadDomosFromServer();
+  loadExpenseFromServer();
 };
 
 var getToken = function getToken() {
