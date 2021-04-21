@@ -17,14 +17,48 @@ var handleDomo = function handleDomo(e) {
   return false;
 };
 
+var handleBudget = function handleBudget(e) {
+  e.preventDefault();
+  $("#domoMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if ($("#BudgetForm").val() == -1) {
+    handleError("Budget is required");
+    return false;
+  }
+
+  console.log($("#BudgetForm").serialize());
+  sendAjax('POST', $("#BudgetForm").attr("action"), $("#BudgetForm").serialize(), function () {
+    console.log("worked check mongo Compass");
+    loadBudgetFromServer();
+  });
+  return false;
+};
+
+var handleExpense = function handleExpense(e) {
+  e.preventDefault();
+  $("#domoMessage").animate({
+    width: 'hide'
+  }, 350);
+
+  if ($("#expenseItem").val() == '' || $("#expenseCost").val() == -1 || $("#expenseType").val() == '' || $("#expenseNecessary").val() == '') {
+    handleError("All fields are required");
+    return false;
+  }
+
+  console.log($("#expenseForm").serialize());
+  sendAjax('POST', $("#expenseForm").attr("action"), $("#expenseForm").serialize(), function () {
+    console.log("check mongo");
+  });
+  return false;
+};
+
 var handleDeleteDomo = function handleDeleteDomo(e) {
   e.preventDefault();
   var csrf = document.querySelector('input[name="_csrf"]').value;
-  var id = e.currentTarget.getAttribute('name'); //console.log(id);
-  //console.log(csrf);
-
-  var deleteData = "_csrf=".concat(csrf, "&domoId=").concat(id); //console.log(deleteData);
-
+  var id = e.currentTarget.getAttribute('name');
+  var deleteData = "_csrf=".concat(csrf, "&domoId=").concat(id);
   sendAjax('POST', $("#domoDelete").attr("action"), deleteData, function () {
     loadDomosFromServer();
   });
@@ -85,6 +119,102 @@ var DomoForm = function DomoForm(props) {
   );
 };
 
+var BudgetForm = function BudgetForm(props) {
+  return (/*#__PURE__*/React.createElement("form", {
+      id: "BudgetForm",
+      onSubmit: handleBudget,
+      name: "BudgetForm",
+      action: "/makerBudget",
+      method: "POST",
+      className: "BudgetForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "Budget"
+    }, "Budget "), /*#__PURE__*/React.createElement("input", {
+      id: "budget",
+      type: "number",
+      name: "budget",
+      placeholder: "0",
+      min: "0"
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "makeBudgetSubmit",
+      type: "submit",
+      value: "Make Budget"
+    }))
+  );
+};
+
+var ExpenseForm = function ExpenseForm(props) {
+  return (/*#__PURE__*/React.createElement("form", {
+      id: "expenseForm",
+      onSubmit: handleExpense,
+      name: "expenseForm",
+      action: "/makerExpense",
+      method: "POST",
+      className: "expenseForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "item"
+    }, "Item: "), /*#__PURE__*/React.createElement("input", {
+      id: "expenseItem",
+      type: "text",
+      name: "item",
+      placeholder: "Ex. Banana"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "cost"
+    }, "Cost: "), /*#__PURE__*/React.createElement("input", {
+      id: "expenseCost",
+      type: "number",
+      name: "cost",
+      placeholder: "0.99",
+      min: "0.0",
+      step: "0.01"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "type"
+    }, "Type: "), /*#__PURE__*/React.createElement("select", {
+      name: "type",
+      id: "expenseType"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "Food/Drink"
+    }, "Food/Drink"), /*#__PURE__*/React.createElement("option", {
+      value: "School"
+    }, "School"), /*#__PURE__*/React.createElement("option", {
+      value: "Housing"
+    }, "Housing"), /*#__PURE__*/React.createElement("option", {
+      value: "Utilities"
+    }, "Untilities"), /*#__PURE__*/React.createElement("option", {
+      value: "Clothing"
+    }, "Clothing"), /*#__PURE__*/React.createElement("option", {
+      value: "Medical/Healthcare"
+    }, "Medical/Healthcare"), /*#__PURE__*/React.createElement("option", {
+      value: "Transportation"
+    }, "Transportation"), /*#__PURE__*/React.createElement("option", {
+      value: "Insurance"
+    }, "Insurance"), /*#__PURE__*/React.createElement("option", {
+      value: "Other"
+    }, "Other")), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "necessary"
+    }, "Necessary: "), /*#__PURE__*/React.createElement("select", {
+      name: "necessary",
+      id: "expenseNecessary"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "true"
+    }, "Yes"), /*#__PURE__*/React.createElement("option", {
+      value: "false"
+    }, "No")), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "makeDomoSubmit",
+      type: "submit",
+      value: "Make Expense"
+    }))
+  );
+};
+
 var DomoList = function DomoList(props) {
   if (props.domos.length === 0) {
     return (/*#__PURE__*/React.createElement("div", {
@@ -118,11 +248,44 @@ var DomoList = function DomoList(props) {
   );
 };
 
+var BudgetList = function BudgetList(props) {
+  if (props.budgets.length === 0) {
+    return (/*#__PURE__*/React.createElement("div", {
+        className: "budgetList"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "emptyBudget"
+      }, "No Budget yet"))
+    );
+  }
+
+  var budgetNodes = props.budgets.map(function (budget) {
+    return (/*#__PURE__*/React.createElement("div", {
+        key: budget._id,
+        className: "budget"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "budgetBudget"
+      }, " Budget: ", budget.budget, " "))
+    );
+  });
+  return (/*#__PURE__*/React.createElement("div", {
+      className: "budgetList"
+    }, budgetNodes)
+  );
+};
+
 var loadDomosFromServer = function loadDomosFromServer() {
   sendAjax('GET', '/getDomos', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
       domos: data.domos
     }), document.querySelector("#domos"));
+  });
+};
+
+var loadBudgetFromServer = function loadBudgetFromServer() {
+  sendAjax('GET', '/getBudget', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
+      budgets: data.budgets
+    }), document.querySelector("#budget"));
   });
 };
 
@@ -133,6 +296,16 @@ var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
     domos: []
   }), document.querySelector("#domos"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
+    budgets: []
+  }), document.querySelector("#budget"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(BudgetForm, {
+    csrf: csrf
+  }), document.querySelector("#makeBudget"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseForm, {
+    csrf: csrf
+  }), document.querySelector("#makeExpense"));
+  loadBudgetFromServer();
   loadDomosFromServer();
 };
 

@@ -14,7 +14,7 @@ const redis = require('redis');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = 'mongodb+srv://breannaHenriquez:Se4242564@cluster0.hcugd.mongodb.net/DomoMaker';
+const dbURL = 'mongodb+srv://breannaHenriquez:Se4242564@cluster0.hcugd.mongodb.net/BudgetTracker';
 
 // setup mongoose options to use newer functionality
 const mongooseOptions = {
