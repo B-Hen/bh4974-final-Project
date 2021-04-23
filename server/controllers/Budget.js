@@ -29,7 +29,7 @@ const makeBudget = (req, res) => {
 
   const BudgetPromise = newBudget.save();
 
-  BudgetPromise.then(() => res.json({ redirect: '/makerBudget' }));
+  BudgetPromise.then(() => res.json({ redirect: '/maker' }));
 
   BudgetPromise.catch((err) => {
     console.log(err);

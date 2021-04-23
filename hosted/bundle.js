@@ -1,10 +1,7 @@
 "use strict";
 
 var handleBudget = function handleBudget(e) {
-  e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
+  e.preventDefault(); 
 
   if ($("#BudgetForm").val() == -1) {
     handleError("Budget is required");
@@ -19,9 +16,6 @@ var handleBudget = function handleBudget(e) {
 
 var handleExpense = function handleExpense(e) {
   e.preventDefault();
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
 
   if ($("#expenseItem").val() == '' || $("#expenseCost").val() == -1 || $("#expenseType").val() == '' || $("#expenseNecessary").val() == '') {
     handleError("All fields are required");
@@ -61,7 +55,7 @@ var BudgetForm = function BudgetForm(props) {
       id: "BudgetForm",
       onSubmit: handleBudget,
       name: "BudgetForm",
-      action: "/makerBudget",
+      action: "/maker",
       method: "POST",
       className: "BudgetForm"
     }, /*#__PURE__*/React.createElement("label", {
@@ -157,7 +151,7 @@ var ExpenseForm = function ExpenseForm(props) {
       name: "_csrf",
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
-      className: "makeDomoSubmit",
+      className: "makeExpenseSubmit",
       type: "submit",
       value: "Make Expense"
     }))
@@ -173,39 +167,6 @@ var DeleteExpense = function DeleteExpense(props) {
       method: "POST",
       className: "expenseDelete"
     }, "Delete Expense")
-  );
-};
-
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
-    return (/*#__PURE__*/React.createElement("div", {
-        className: "domoList"
-      }, /*#__PURE__*/React.createElement("h3", {
-        className: "emptyDomo"
-      }, "No Domos yet"))
-    );
-  }
-
-  var domoNodes = props.domos.map(function (domo) {
-    return (/*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo"
-      }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
-      }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoLevel"
-      }, " Level: ", domo.level, " "), DeleteButton(domo._id))
-    );
-  });
-  return (/*#__PURE__*/React.createElement("div", {
-      className: "domoList"
-    }, domoNodes)
   );
 };
 
@@ -319,15 +280,9 @@ $(document).ready(function () {
 
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({
-    width: 'toggle'
-  }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
-    width: 'hide'
-  }, 350);
   window.location = response.redirect;
 };
 

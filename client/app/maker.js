@@ -1,8 +1,6 @@
 const handleBudget = (e) => {
     e.preventDefault();
 
-    $("#domoMessage").animate({width:'hide'},350);
-
     if($("#BudgetForm").val() == -1) {
         handleError("Budget is required");
         return false;
@@ -17,8 +15,6 @@ const handleBudget = (e) => {
 
 const handleExpense = (e) => {
     e.preventDefault();
-
-    $("#domoMessage").animate({width:'hide'},350);
 
     if($("#expenseItem").val() == '' || $("#expenseCost").val() == -1 || $("#expenseType").val() == '' || $("#expenseNecessary").val() == '') {
         handleError("All fields are required");
@@ -67,7 +63,7 @@ const BudgetForm = (props) => {
         <form id="BudgetForm"
         onSubmit={handleBudget}
         name="BudgetForm"
-        action="/makerBudget"
+        action="/maker"
         method="POST"
         className="BudgetForm"
         >
@@ -122,7 +118,7 @@ const ExpenseForm = (props) => {
                 <option value="false">No</option>
             </select>
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Expense" />
+            <input className="makeExpenseSubmit" type="submit" value="Make Expense" />
 
         </form>
     );
@@ -139,34 +135,6 @@ const DeleteExpense = (props) => {
         >Delete Expense</button>
     )
 }
-
-const DomoList = function(props) {
-    if(props.domos.length === 0) {
-        return (
-            <div className="domoList">
-                <h3 className="emptyDomo">No Domos yet</h3>
-            </div>
-        );
-    }
-
-    const domoNodes = props.domos.map(function(domo) {
-        return (
-            <div key={domo._id} className="domo">
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName"> Name: {domo.name} </h3>
-                <h3 className="domoAge"> Age: {domo.age} </h3>
-                <h3 className="domoLevel"> Level: {domo.level} </h3>
-                {DeleteButton(domo._id)}
-            </div>
-        );
-    });
-
-    return (
-        <div className="domoList">
-            {domoNodes}      
-        </div>
-    );
-};
 
 const BudgetList = function(props) {
     if(props.budgets.length === 0) {
