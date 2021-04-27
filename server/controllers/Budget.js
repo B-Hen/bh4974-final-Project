@@ -71,8 +71,23 @@ const deleteBudget = (request, response) => {
   });
 };
 
+const updateBudget = (request, response) => {
+  const req = request;
+  const res = response;
+  
+  return Budget.BudgetModel.findAndUpdate(req.body._id, req.body.updatebudget, (err) => {
+    if(err) {
+      console.log(err);
+      return res.status(400).json({error: 'An error occured'});
+    }
+
+    return res.json({message: 'Updated Budget'});
+  });
+};
+
 
 module.exports.makerPage = makerPage;
 module.exports.getBudget = getBudget;
 module.exports.deleteBudget = deleteBudget;
+module.exports.updateBudget = updateBudget;
 module.exports.make = makeBudget;

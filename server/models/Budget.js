@@ -50,8 +50,19 @@ BudgetSchema.statics.findAndDelete = (indexId, callback) => {
   BudgetModel.deleteOne(search).lean().exec(callback);
 };
 
+BudgetSchema.statics.findAndUpdate = (indexId, indexBudget, callback) => {
+ 
+  BudgetModel.updateOne(
+    {_id : convertId(indexId)},
+    {
+      $set: {"budget" : indexBudget}
+    }
+  ).lean().exec(callback);
+};
+
 
 BudgetModel = mongoose.model('Budget', BudgetSchema);
 
 module.exports.BudgetModel = BudgetModel;
 module.exports.BudgetSchema = BudgetSchema;
+

@@ -9,6 +9,7 @@ const router = (app) => {
   app.post('/login', mid.requiresSecures, mid.requiresLogout, controllers.Account.login);
   app.post('/signup', mid.requiresSecures, mid.requiresLogout, controllers.Account.signup);
   app.post('/deleteBudget', mid.requiresSecures, controllers.Budget.deleteBudget);
+  app.post('/updateBudget', mid.requiresSecures, controllers.Budget.updateBudget);
   app.post('/deleteExpense', mid.requiresSecures, controllers.Expense.deleteExpense);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/maker', mid.requiresLogin, controllers.Budget.makerPage);

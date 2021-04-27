@@ -20,7 +20,7 @@ const handleExpense = (e) => {
         handleError("All fields are required");
         return false;
     }
-
+    
     sendAjax('POST', $("#expenseForm").attr("action"), $("#expenseForm").serialize(), function() {
         loadExpenseFromServer();
     });
@@ -41,7 +41,34 @@ const handleDeleteBudget = (e) => {
     });
 
     return false;
-}
+};
+
+ const handleUpdateBudget = (e) => {
+     e.preventDefault();
+     
+     const csrf = document.querySelector('input[name="_csrf"]').value;
+     const id = e.currentTarget.getAttribute('name');
+
+     ReactDOM.render(
+        <UpdateBudgetForm csrf={csrf}  _id={id}/>, document.querySelector("#budgets")
+    )
+ };
+
+ const handleBudgetUpdateDatabase = (e) => {
+     e.preventDefault();
+
+     if($("#UpdateBudgetForm").val() == -1) {
+        handleError("Budget is required");
+        return false;
+    }
+
+    sendAjax('POST', $("#UpdateBudgetForm").attr("action"), $("#UpdateBudgetForm").serialize(), function() {
+        loadBudgetFromServer();
+    });
+
+    return false;
+
+ }
 
 const handleDeleteExpense = (e) => {
     e.preventDefault();
@@ -75,6 +102,24 @@ const BudgetForm = (props) => {
     );
 };
 
+const UpdateBudgetForm = (props) => {
+    return (
+        <form id="UpdateBudgetForm"
+        onSubmit={handleBudgetUpdateDatabase}
+        name="UpdateBudgetForm"
+        action="/updateBudget"
+        method="POST"
+        className="UpdateBudgetForm"
+        >
+            <label htmlFor="Budget">Budget </label>
+            <input id="updatebudget" type="number" name="updatebudget" placeholder="0" min="0" />
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input type="hidden" name="_id" value={props._id} />
+            <input className="makeUpdateBudgetSubmit" type="submit" value="Update Budget" />
+        </form>
+    );
+};
+
 const DeleteBudget = (props) => {
     return (
         <button id="budgetDelete"
@@ -84,6 +129,18 @@ const DeleteBudget = (props) => {
         method="POST"
         className="budgetDelete"
         >Delete Budget</button>
+    )
+}
+
+const UpdateBudget = (props) => {
+    return (
+        <button id="updateBudget"
+        onClick={handleUpdateBudget}
+        name={props}
+        action="/updateBudget"
+        method="POST"
+        className="updateBudget"
+        >Update Budget</button>
     )
 }
 
@@ -145,11 +202,13 @@ const BudgetList = function(props) {
         );
     }
 
-    const budgetNodes = props.budgets.map(function(budget) {        
+    const budgetNodes = props.budgets.map(function(budget) { 
+        let _id = budget._id;     
         return (
             <div key={budget._id} className="budget">
                 <h3 className="budgetBudget"> Budget: {budget.budget} </h3>
-                {DeleteBudget(budget._id)}
+                {DeleteBudget(_id)}
+                {UpdateBudget(_id)}
             </div>
         );
     });
@@ -184,10 +243,10 @@ const ExpenseList = function(props) {
         }
         return (
             <div key={expense._id} className="expense">
-                <h3 className="expenseItem"> Item: {expense.item} </h3>
-                <h3 className="expenseCost"> Cost: ${expense.cost} </h3>
-                <h3 className="expenseItem"> Type: {expense.type} </h3>
-                <h3 className="expenseItem"> Necessary: {necessary} </h3>
+                <span className="expenseItem"> Item: {expense.item} </span>
+                <span className="expenseCost"> Cost: ${expense.cost} </span>
+                <span className="expenseItem"> Type: {expense.type} </span>
+                <span className="expenseItem"> Necessary: {necessary} </span>
                 {DeleteExpense(expense._id)}
             </div>
         );

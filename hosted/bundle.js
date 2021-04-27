@@ -1,7 +1,7 @@
 "use strict";
 
 var handleBudget = function handleBudget(e) {
-  e.preventDefault(); 
+  e.preventDefault();
 
   if ($("#BudgetForm").val() == -1) {
     handleError("Budget is required");
@@ -34,6 +34,30 @@ var handleDeleteBudget = function handleDeleteBudget(e) {
   var id = e.currentTarget.getAttribute('name');
   var deleteData = "_csrf=".concat(csrf, "&budgetId=").concat(id);
   sendAjax('POST', $("#budgetDelete").attr("action"), deleteData, function () {
+    loadBudgetFromServer();
+  });
+  return false;
+};
+
+var handleUpdateBudget = function handleUpdateBudget(e) {
+  e.preventDefault();
+  var csrf = document.querySelector('input[name="_csrf"]').value;
+  var id = e.currentTarget.getAttribute('name');
+  ReactDOM.render( /*#__PURE__*/React.createElement(UpdateBudgetForm, {
+    csrf: csrf,
+    _id: id
+  }), document.querySelector("#budgets"));
+};
+
+var handleBudgetUpdateDatabase = function handleBudgetUpdateDatabase(e) {
+  e.preventDefault();
+
+  if ($("#UpdateBudgetForm").val() == -1) {
+    handleError("Budget is required");
+    return false;
+  }
+
+  sendAjax('POST', $("#UpdateBudgetForm").attr("action"), $("#UpdateBudgetForm").serialize(), function () {
     loadBudgetFromServer();
   });
   return false;
@@ -78,6 +102,38 @@ var BudgetForm = function BudgetForm(props) {
   );
 };
 
+var UpdateBudgetForm = function UpdateBudgetForm(props) {
+  return (/*#__PURE__*/React.createElement("form", {
+      id: "UpdateBudgetForm",
+      onSubmit: handleBudgetUpdateDatabase,
+      name: "UpdateBudgetForm",
+      action: "/updateBudget",
+      method: "POST",
+      className: "UpdateBudgetForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "Budget"
+    }, "Budget "), /*#__PURE__*/React.createElement("input", {
+      id: "updatebudget",
+      type: "number",
+      name: "updatebudget",
+      placeholder: "0",
+      min: "0"
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_id",
+      value: props._id
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "makeUpdateBudgetSubmit",
+      type: "submit",
+      value: "Update Budget"
+    }))
+  );
+};
+
 var DeleteBudget = function DeleteBudget(props) {
   return (/*#__PURE__*/React.createElement("button", {
       id: "budgetDelete",
@@ -87,6 +143,18 @@ var DeleteBudget = function DeleteBudget(props) {
       method: "POST",
       className: "budgetDelete"
     }, "Delete Budget")
+  );
+};
+
+var UpdateBudget = function UpdateBudget(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "updateBudget",
+      onClick: handleUpdateBudget,
+      name: props,
+      action: "/updateBudget",
+      method: "POST",
+      className: "updateBudget"
+    }, "Update Budget")
   );
 };
 
@@ -181,12 +249,13 @@ var BudgetList = function BudgetList(props) {
   }
 
   var budgetNodes = props.budgets.map(function (budget) {
+    var _id = budget._id;
     return (/*#__PURE__*/React.createElement("div", {
         key: budget._id,
         className: "budget"
       }, /*#__PURE__*/React.createElement("h3", {
         className: "budgetBudget"
-      }, " Budget: ", budget.budget, " "), DeleteBudget(budget._id))
+      }, " Budget: ", budget.budget, " "), DeleteBudget(_id), UpdateBudget(_id))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
@@ -217,13 +286,13 @@ var ExpenseList = function ExpenseList(props) {
     return (/*#__PURE__*/React.createElement("div", {
         key: expense._id,
         className: "expense"
-      }, /*#__PURE__*/React.createElement("h3", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
-      }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("span", {
         className: "expenseCost"
-      }, " Cost: $", expense.cost, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " Cost: $", expense.cost, " "), /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
-      }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("h3", {
+      }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
       }, " Necessary: ", necessary, " "), DeleteExpense(expense._id))
     );
