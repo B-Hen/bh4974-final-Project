@@ -74,14 +74,14 @@ const deleteBudget = (request, response) => {
 const updateBudget = (request, response) => {
   const req = request;
   const res = response;
-  
+
   return Budget.BudgetModel.findAndUpdate(req.body._id, req.body.updatebudget, (err) => {
-    if(err) {
+    if (err) {
       console.log(err);
-      return res.status(400).json({error: 'An error occured'});
+      return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({message: 'Updated Budget'});
+    return res.json({ message: 'Updated Budget' });
   });
 };
 
