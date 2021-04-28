@@ -11,6 +11,7 @@ const router = (app) => {
   app.post('/deleteBudget', mid.requiresSecures, controllers.Budget.deleteBudget);
   app.post('/updateBudget', mid.requiresSecures, controllers.Budget.updateBudget);
   app.post('/deleteExpense', mid.requiresSecures, controllers.Expense.deleteExpense);
+  app.post('/editExpense', mid.requiresSecures, controllers.Expense.editExpense);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
   app.get('/maker', mid.requiresLogin, controllers.Budget.makerPage);
   app.post('/maker', mid.requiresLogin, controllers.Budget.make);

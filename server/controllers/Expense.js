@@ -80,8 +80,29 @@ const deleteExpense = (request, response) => {
   });
 };
 
+const editExpense = (request, response) => {
+  const req = request;
+  const res = response;
+
+  console.log(req.body.item);
+  console.log(req.body.cost);
+  console.log(req.body.type);
+  console.log(req.body.necessary);
+  console.log(req.body._id);
+
+  return Expense.ExpenseModel.findAndEdit(req.body._id, req.body.item,
+    req.body.cost, req.body.type, req.body.necessary, (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ error: 'An error occured' });
+      }
+
+      return res.json({ message: 'Edited and Updated Expense' });
+    });
+};
 
 module.exports.makerPage = makerPage;
 module.exports.getExpense = getExpense;
 module.exports.deleteExpense = deleteExpense;
+module.exports.editExpense = editExpense;
 module.exports.make = makeExpense;

@@ -70,6 +70,20 @@ ExpenseSchema.statics.findAndDelete = (indexId, callback) => {
   ExpenseModel.deleteOne(search).lean().exec(callback);
 };
 
+ExpenseSchema.statics.findAndEdit = (indexID, indexItem, indexCost, indexType, indexNecessary, callback) => {
+  ExpenseModel.updateOne(
+    { _id: convertId(indexID) },
+    {
+      $set: {
+        item: indexItem,
+        cost: indexCost,
+        type: indexType,
+        necessary: indexNecessary,
+      },
+    },
+  ).lean().exec(callback);
+};
+
 
 ExpenseModel = mongoose.model('Expense', ExpenseSchema);
 

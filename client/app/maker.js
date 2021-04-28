@@ -57,7 +57,7 @@ const handleDeleteBudget = (e) => {
  const handleBudgetUpdateDatabase = (e) => {
      e.preventDefault();
 
-     if($("#UpdateBudgetForm").val() == -1) {
+     if($("#updatebudget").val() == -1) {
         handleError("Budget is required");
         return false;
     }
@@ -68,7 +68,7 @@ const handleDeleteBudget = (e) => {
 
     return false;
 
- }
+ };
 
 const handleDeleteExpense = (e) => {
     e.preventDefault();
@@ -79,6 +79,34 @@ const handleDeleteExpense = (e) => {
     const deleteData = `_csrf=${csrf}&expenseId=${id}`;
 
     sendAjax('POST', $("#expenseDelete").attr("action"), deleteData, function() {
+        loadExpenseFromServer();
+    });
+
+    return false;
+};
+
+const handleEditExpense = (e) => {
+    e.preventDefault();
+
+    const csrf = document.querySelector('input[name="_csrf"]').value;
+    const id = e.currentTarget.getAttribute('name');
+
+    console.log(id);
+
+    ReactDOM.render(
+         <EditExpenseForm csrf={csrf} id={id}/>, document.querySelector(`[id='${id}'`)
+     )
+};
+
+const handleEditExpenseDatabase = (e) => {
+    e.preventDefault();
+
+    if($("#editexpenseItem").val() == '' || $("#editexpenseCost").val() == -1 || $("#editexpenseType").val() == '' || $("#editexpenseNecessary").val() == '') {
+        handleError("All fields are required");
+        return false;
+    }
+    
+    sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function() {
         loadExpenseFromServer();
     });
 
@@ -137,8 +165,6 @@ const UpdateBudget = (props) => {
         <button id="updateBudget"
         onClick={handleUpdateBudget}
         name={props}
-        action="/updateBudget"
-        method="POST"
         className="updateBudget"
         >Update Budget</button>
     )
@@ -181,6 +207,44 @@ const ExpenseForm = (props) => {
     );
 };
 
+const EditExpenseForm = (props) => {
+    return (
+        <form id="editexpenseForm"
+        onSubmit={handleEditExpenseDatabase}
+        name="editexpenseForm"
+        action="/editExpense"
+        method="POST"
+        className="editexpenseForm"
+        >
+            <label htmlFor="item">Item: </label>
+            <input id="editexpenseItem" type="text" name="item" placeholder="Ex. Banana" />
+            <label htmlFor="cost">Cost: </label>
+            <input id="editexpenseCost" type="number" name="cost" placeholder="0.99" min="0.0" step="0.01"/>
+            <label htmlFor="type">Type: </label>
+            <select name="type" id="editexpenseType">
+                <option value="Food/Drink">Food/Drink</option>
+                <option value="School">School</option>
+                <option value="Housing">Housing</option>
+                <option value="Utilities">Untilities</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Medical/Healthcare">Medical/Healthcare</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Insurance">Insurance</option>
+                <option value="Other">Other</option>
+            </select>
+            <label htmlFor="necessary">Necessary: </label>
+            <select name="necessary" id="editexpenseNecessary">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input type="hidden" name="_id" value={props.id} />
+            <input className="editExpenseSubmit" type="submit" value="Edit Expense" />
+
+        </form>
+    );
+};
+
 const DeleteExpense = (props) => {
     return (
         <button id="expenseDelete"
@@ -190,6 +254,16 @@ const DeleteExpense = (props) => {
         method="POST"
         className="expenseDelete"
         >Delete Expense</button>
+    )
+}
+
+const EditExpense = (props) => {
+    return (
+        <button id="editExpense"
+        onClick={handleEditExpense}
+        name={props}
+        className="editExpense"
+        >Edit Expense</button>
     )
 }
 
@@ -232,6 +306,7 @@ const ExpenseList = function(props) {
 
     const expenseNodes = props.expenses.map(function(expense) {  
         let necessary;
+        let id = expense._id;
 
         if(expense.necessary)
         {
@@ -242,12 +317,13 @@ const ExpenseList = function(props) {
             necessary = "No";
         }
         return (
-            <div key={expense._id} className="expense">
+            <div key={expense._id} className="expense" id={expense._id}>
                 <span className="expenseItem"> Item: {expense.item} </span>
                 <span className="expenseCost"> Cost: ${expense.cost} </span>
                 <span className="expenseItem"> Type: {expense.type} </span>
                 <span className="expenseItem"> Necessary: {necessary} </span>
-                {DeleteExpense(expense._id)}
+                {DeleteExpense(id)}
+                {EditExpense(id)}
             </div>
         );
     });

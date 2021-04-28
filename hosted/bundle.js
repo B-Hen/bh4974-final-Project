@@ -52,7 +52,7 @@ var handleUpdateBudget = function handleUpdateBudget(e) {
 var handleBudgetUpdateDatabase = function handleBudgetUpdateDatabase(e) {
   e.preventDefault();
 
-  if ($("#UpdateBudgetForm").val() == -1) {
+  if ($("#updatebudget").val() == -1) {
     handleError("Budget is required");
     return false;
   }
@@ -69,6 +69,31 @@ var handleDeleteExpense = function handleDeleteExpense(e) {
   var id = e.currentTarget.getAttribute('name');
   var deleteData = "_csrf=".concat(csrf, "&expenseId=").concat(id);
   sendAjax('POST', $("#expenseDelete").attr("action"), deleteData, function () {
+    loadExpenseFromServer();
+  });
+  return false;
+};
+
+var handleEditExpense = function handleEditExpense(e) {
+  e.preventDefault();
+  var csrf = document.querySelector('input[name="_csrf"]').value;
+  var id = e.currentTarget.getAttribute('name');
+  console.log(id);
+  ReactDOM.render( /*#__PURE__*/React.createElement(EditExpenseForm, {
+    csrf: csrf,
+    id: id
+  }), document.querySelector("[id='".concat(id, "'")));
+};
+
+var handleEditExpenseDatabase = function handleEditExpenseDatabase(e) {
+  e.preventDefault();
+
+  if ($("#editexpenseItem").val() == '' || $("#editexpenseCost").val() == -1 || $("#editexpenseType").val() == '' || $("#editexpenseNecessary").val() == '') {
+    handleError("All fields are required");
+    return false;
+  }
+
+  sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function () {
     loadExpenseFromServer();
   });
   return false;
@@ -151,8 +176,6 @@ var UpdateBudget = function UpdateBudget(props) {
       id: "updateBudget",
       onClick: handleUpdateBudget,
       name: props,
-      action: "/updateBudget",
-      method: "POST",
       className: "updateBudget"
     }, "Update Budget")
   );
@@ -226,6 +249,78 @@ var ExpenseForm = function ExpenseForm(props) {
   );
 };
 
+var EditExpenseForm = function EditExpenseForm(props) {
+  return (/*#__PURE__*/React.createElement("form", {
+      id: "editexpenseForm",
+      onSubmit: handleEditExpenseDatabase,
+      name: "editexpenseForm",
+      action: "/editExpense",
+      method: "POST",
+      className: "editexpenseForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "item"
+    }, "Item: "), /*#__PURE__*/React.createElement("input", {
+      id: "editexpenseItem",
+      type: "text",
+      name: "item",
+      placeholder: "Ex. Banana"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "cost"
+    }, "Cost: "), /*#__PURE__*/React.createElement("input", {
+      id: "editexpenseCost",
+      type: "number",
+      name: "cost",
+      placeholder: "0.99",
+      min: "0.0",
+      step: "0.01"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "type"
+    }, "Type: "), /*#__PURE__*/React.createElement("select", {
+      name: "type",
+      id: "editexpenseType"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "Food/Drink"
+    }, "Food/Drink"), /*#__PURE__*/React.createElement("option", {
+      value: "School"
+    }, "School"), /*#__PURE__*/React.createElement("option", {
+      value: "Housing"
+    }, "Housing"), /*#__PURE__*/React.createElement("option", {
+      value: "Utilities"
+    }, "Untilities"), /*#__PURE__*/React.createElement("option", {
+      value: "Clothing"
+    }, "Clothing"), /*#__PURE__*/React.createElement("option", {
+      value: "Medical/Healthcare"
+    }, "Medical/Healthcare"), /*#__PURE__*/React.createElement("option", {
+      value: "Transportation"
+    }, "Transportation"), /*#__PURE__*/React.createElement("option", {
+      value: "Insurance"
+    }, "Insurance"), /*#__PURE__*/React.createElement("option", {
+      value: "Other"
+    }, "Other")), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "necessary"
+    }, "Necessary: "), /*#__PURE__*/React.createElement("select", {
+      name: "necessary",
+      id: "editexpenseNecessary"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: "true"
+    }, "Yes"), /*#__PURE__*/React.createElement("option", {
+      value: "false"
+    }, "No")), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_id",
+      value: props.id
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "editExpenseSubmit",
+      type: "submit",
+      value: "Edit Expense"
+    }))
+  );
+};
+
 var DeleteExpense = function DeleteExpense(props) {
   return (/*#__PURE__*/React.createElement("button", {
       id: "expenseDelete",
@@ -235,6 +330,16 @@ var DeleteExpense = function DeleteExpense(props) {
       method: "POST",
       className: "expenseDelete"
     }, "Delete Expense")
+  );
+};
+
+var EditExpense = function EditExpense(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "editExpense",
+      onClick: handleEditExpense,
+      name: props,
+      className: "editExpense"
+    }, "Edit Expense")
   );
 };
 
@@ -276,6 +381,7 @@ var ExpenseList = function ExpenseList(props) {
 
   var expenseNodes = props.expenses.map(function (expense) {
     var necessary;
+    var id = expense._id;
 
     if (expense.necessary) {
       necessary = "Yes";
@@ -285,7 +391,8 @@ var ExpenseList = function ExpenseList(props) {
 
     return (/*#__PURE__*/React.createElement("div", {
         key: expense._id,
-        className: "expense"
+        className: "expense",
+        id: expense._id
       }, /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
       }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("span", {
@@ -294,7 +401,7 @@ var ExpenseList = function ExpenseList(props) {
         className: "expenseItem"
       }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
-      }, " Necessary: ", necessary, " "), DeleteExpense(expense._id))
+      }, " Necessary: ", necessary, " "), DeleteExpense(id), EditExpense(id))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
