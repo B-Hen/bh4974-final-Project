@@ -82,7 +82,8 @@ var handleEditExpense = function handleEditExpense(e) {
   ReactDOM.render( /*#__PURE__*/React.createElement(EditExpenseForm, {
     csrf: csrf,
     id: id
-  }), document.querySelector("[id='".concat(id, "'")));
+  }), document.getElementById("".concat(id)) //`[id='${id}'`
+  );
 };
 
 var handleEditExpenseDatabase = function handleEditExpenseDatabase(e) {
@@ -96,6 +97,7 @@ var handleEditExpenseDatabase = function handleEditExpenseDatabase(e) {
   sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function () {
     loadExpenseFromServer();
   });
+  loadExpenseFromServer();
   return false;
 };
 

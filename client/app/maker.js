@@ -94,7 +94,7 @@ const handleEditExpense = (e) => {
     console.log(id);
 
     ReactDOM.render(
-         <EditExpenseForm csrf={csrf} id={id}/>, document.querySelector(`[id='${id}'`)
+         <EditExpenseForm csrf={csrf} id={id}/>, document.getElementById(`${id}`) //`[id='${id}'`
      )
 };
 
@@ -109,6 +109,8 @@ const handleEditExpenseDatabase = (e) => {
     sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function() {
         loadExpenseFromServer();
     });
+
+    loadExpenseFromServer();
 
     return false;
 }

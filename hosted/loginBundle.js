@@ -30,6 +30,32 @@ var handleSignup = function handleSignup(e) {
   return false;
 };
 
+var handleChangePassword = function handleChangePassword(e) {
+  e.preventDefault();
+  var csrf = document.querySelector('input[name="_csrf"]').value;
+  createPassWordWindow(csrf);
+};
+
+var handleChangePass = function handleChangePass(e) {
+  e.preventDefault();
+
+  if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
+    handleError("RAWR! All fields are required");
+    return false;
+  }
+
+  if ($("#pass2").val() !== $("#pass3").val()) {
+    handleError("RAWR! Passwords do not match");
+    return false;
+  }
+
+  console.log($("#changePasswordForm").serialize());
+  sendAjax('POST', $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function () {
+    console.log("sent");
+  });
+  return false;
+};
+
 var LoginWindow = function LoginWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
       id: "loginForm",
@@ -105,21 +131,93 @@ var SignupWindow = function SignupWindow(props) {
   );
 };
 
+var ChangePasswordWindow = function ChangePasswordWindow(props) {
+  return (/*#__PURE__*/React.createElement("form", {
+      id: "changePasswordForm",
+      name: "changePasswordForm",
+      onSubmit: handleChangePass,
+      action: "/changePass",
+      method: "POST",
+      className: "changePassForm"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "username"
+    }, "Username: "), /*#__PURE__*/React.createElement("input", {
+      id: "user",
+      type: "text",
+      name: "username",
+      placeholder: "username"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "pass"
+    }, "Old Password: "), /*#__PURE__*/React.createElement("input", {
+      id: "pass",
+      type: "password",
+      name: "pass",
+      placeholder: "old password"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "pass2"
+    }, "New Password: "), /*#__PURE__*/React.createElement("input", {
+      id: "pass2",
+      type: "password",
+      name: "pass2",
+      placeholder: "new password"
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "pass3"
+    }, "New Password: "), /*#__PURE__*/React.createElement("input", {
+      id: "pass3",
+      type: "password",
+      name: "pass3",
+      placeholder: "retype new password"
+    }), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props.csrf
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "formSubmit",
+      type: "submit",
+      value: "Change Password"
+    }))
+  );
+};
+
+var ChangePasswordButton = function ChangePasswordButton(props) {
+  return (/*#__PURE__*/React.createElement("button", {
+      id: "changePasswordButton",
+      name: props,
+      onClick: handleChangePassword,
+      className: "changePasswordButton"
+    }, "Change Password")
+  );
+};
+
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordButton, {
+    csrf: csrf
+  }), document.querySelector("#passButton"));
 };
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordButton, {
+    csrf: csrf
+  }), document.querySelector("#passButton"));
+};
+
+var createPassWordWindow = function createPassWordWindow(csrf) {
+  ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordWindow, {
+    csrf: csrf
+  }), document.querySelector("#content"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#passButton"));
 };
 
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
   var signuputton = document.querySelector("#signupButton");
+  var changePassButton = document.querySelector("#changePasswordButton");
   signuputton.addEventListener("click", function (e) {
     e.preventDefault();
     createSignupWindow(csrf);
@@ -128,6 +226,11 @@ var setup = function setup(csrf) {
   loginButton.addEventListener("click", function (e) {
     e.preventDefault();
     createLoginWindow(csrf);
+    return false;
+  });
+  changePassButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createPassWordWindow(csrf);
     return false;
   });
   createLoginWindow(csrf); //default view

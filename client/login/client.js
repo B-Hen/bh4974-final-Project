@@ -31,6 +31,36 @@ const handleSignup = (e) => {
     return false;
 };
 
+const handleChangePassword = (e) => {
+    e.preventDefault();
+
+    const csrf = document.querySelector('input[name="_csrf"]').value;
+
+    createPassWordWindow(csrf);
+};
+
+const handleChangePass = (e) => {
+    e.preventDefault();
+
+    if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
+        handleError("RAWR! All fields are required");
+        return false;
+    }
+
+    if($("#pass2").val() !== $("#pass3").val()) {
+        handleError("RAWR! Passwords do not match");
+        return false;
+    }
+
+    console.log($("#changePasswordForm").serialize());
+
+    sendAjax('POST', $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function(){
+        console.log("sent");
+    });
+
+    return false;
+}
+
 const LoginWindow = (props) => {
     return (
         <form id="loginForm" name="loginForm"
@@ -45,7 +75,6 @@ const LoginWindow = (props) => {
             <input id="pass" type="password" name="pass" placeholder="password" />
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="formSubmit" type="submit" value="Sign in" />
-
         </form>
     );
 };
@@ -71,11 +100,52 @@ const SignupWindow = (props) => {
     );
 };
 
+const ChangePasswordWindow = (props) => {
+    return (
+        <form id="changePasswordForm"
+        name="changePasswordForm"
+        onSubmit={handleChangePass}
+        action="/changePass"
+        method="POST"
+        className="changePassForm"
+        >
+            <label htmlFor="username">Username: </label>
+            <input id="user" type="text" name="username" placeholder="username" />
+            <label htmlFor="pass">Old Password: </label>
+            <input id="pass" type="password" name="pass" placeholder="old password" />
+            <label htmlFor="pass2">New Password: </label>
+            <input id="pass2" type="password" name="pass2" placeholder="new password" />
+            <label htmlFor="pass3">New Password: </label>
+            <input id="pass3" type="password" name="pass3" placeholder="retype new password" />
+            <input type="hidden" name="_csrf" value={props.csrf} />
+            <input className="formSubmit" type="submit" value="Change Password" />
+        </form>
+    );
+};
+
+const ChangePasswordButton = (props) => {
+    return (
+        <button 
+        id="changePasswordButton"
+        name={props}
+        onClick={handleChangePassword}
+        className="changePasswordButton">
+
+            Change Password
+        </button>
+    )
+}
+
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
         document.querySelector("#content")
     );
+
+    ReactDOM.render(
+        <ChangePasswordButton csrf={csrf} />,
+        document.querySelector("#passButton")
+    )
 };
 
 const createSignupWindow = (csrf) => {
@@ -83,11 +153,26 @@ const createSignupWindow = (csrf) => {
         <SignupWindow csrf={csrf} />,
         document.querySelector("#content")
     );
+
+    ReactDOM.render(
+        <ChangePasswordButton csrf={csrf} />,
+        document.querySelector("#passButton")
+    );
+};
+
+const createPassWordWindow = (csrf) => {
+    ReactDOM.render(
+        <ChangePasswordWindow csrf={csrf} />,
+        document.querySelector("#content")
+    );
+
+    ReactDOM.unmountComponentAtNode(document.querySelector("#passButton"));
 };
 
 const setup = (csrf) => {
     const loginButton = document.querySelector("#loginButton");
     const signuputton = document.querySelector("#signupButton");
+    const changePassButton = document.querySelector("#changePasswordButton");
 
     signuputton.addEventListener("click", (e) => {
         e.preventDefault();
@@ -100,6 +185,13 @@ const setup = (csrf) => {
         createLoginWindow(csrf);
         return false;
     });
+
+    changePassButton.addEventListener("click", (e)=> {
+        e.preventDefault();
+        createPassWordWindow(csrf);
+        return false;
+    });
+
 
     createLoginWindow(csrf); //default view
 };

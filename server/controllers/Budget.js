@@ -67,7 +67,7 @@ const deleteBudget = (request, response) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({ message: 'Deleted Budget' });
+    return res.status(200).json({ message: 'Deleted Budget' });
   });
 };
 
@@ -81,7 +81,7 @@ const updateBudget = (request, response) => {
       return res.status(400).json({ error: 'An error occured' });
     }
 
-    return res.json({ message: 'Updated Budget' });
+    return res.status(200).json({ message: 'Updated Budget' });
   });
 };
 

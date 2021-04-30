@@ -90,8 +90,36 @@ const getToken = (request, response) => {
   res.json(csrfJSON);
 };
 
+const changePassword = (request, response) => {
+  const req = request;
+  const res = response;
+
+  console.log(req.body.username);
+  console.log(req.body.pass);
+  console.log(req.body.pass2);
+  console.log(req.body.pass3);
+
+  return Account.AccountModel.generateHash(req.body.pass2, (salt, hash) => {
+    const accountData = {
+      username: req.body.username,
+      salt,
+      password: hash,
+    };
+
+    Account.AccountModel.changePassword(accountData.username, accountData.password, accountData.salt, (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json({ error: 'An error occured' });
+      }
+
+      return res.status(200).json({ message: 'Changed Password' });
+    });
+  });
+};
+
 module.exports.loginPage = loginPage;
 module.exports.login = login;
 module.exports.logout = logout;
 module.exports.signup = signup;
 module.exports.getToken = getToken;
+module.exports.changePassword = changePassword;

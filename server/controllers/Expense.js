@@ -84,12 +84,6 @@ const editExpense = (request, response) => {
   const req = request;
   const res = response;
 
-  console.log(req.body.item);
-  console.log(req.body.cost);
-  console.log(req.body.type);
-  console.log(req.body.necessary);
-  console.log(req.body._id);
-
   return Expense.ExpenseModel.findAndEdit(req.body._id, req.body.item,
     req.body.cost, req.body.type, req.body.necessary, (err) => {
       if (err) {
@@ -97,7 +91,7 @@ const editExpense = (request, response) => {
         return res.status(400).json({ error: 'An error occured' });
       }
 
-      return res.json({ message: 'Edited and Updated Expense' });
+      return res.status(200).json({ message: 'Edited and Updated Expense' });
     });
 };
 
