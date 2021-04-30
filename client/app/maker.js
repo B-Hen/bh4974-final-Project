@@ -94,7 +94,7 @@ const handleEditExpense = (e) => {
     console.log(id);
 
     ReactDOM.render(
-         <EditExpenseForm csrf={csrf} id={id}/>, document.getElementById(`${id}`) //`[id='${id}'`
+         <EditExpenseForm csrf={csrf} id={id}/>, document.getElementById(`${id}`) 
      )
 };
 
@@ -107,10 +107,8 @@ const handleEditExpenseDatabase = (e) => {
     }
     
     sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function() {
-        loadExpenseFromServer();
+        loadExpense();
     });
-
-    loadExpenseFromServer();
 
     return false;
 }
@@ -353,6 +351,55 @@ const loadExpenseFromServer = () => {
         );
     });
 };
+
+const loadExpense = () => {
+    let ExpenseList1 = function(props) {
+        if(props.expenses.length === 0) {
+            return (
+                <div className="expenseList">
+                    <h3 className="emptyExpense">No Expenses yet</h3>
+                </div>
+            );
+        }
+    
+        const expenseNodes = props.expenses.map(function(expense) {  
+            let necessary;
+            let id = expense._id;
+    
+            if(expense.necessary)
+            {
+                necessary = "Yes";
+            }      
+            else if(!expense.necessary)
+            {
+                necessary = "No";
+            }
+            return (
+                <div key={expense._id} className="expense" id={expense._id}>
+                    <span className="expenseItem"> Item: {expense.item} </span>
+                    <span className="expenseCost"> Cost: ${expense.cost} </span>
+                    <span className="expenseItem"> Type: {expense.type} </span>
+                    <span className="expenseItem"> Necessary: {necessary} </span>
+                    {DeleteExpense(id)}
+                    {EditExpense(id)}
+                </div>
+            );
+        });
+    
+        return (
+            <div className="expenseList">
+                {expenseNodes}      
+            </div>
+    
+        );
+    };
+
+    sendAjax('GET', '/getExpense', null, (data) => {
+        ReactDOM.render(
+            <ExpenseList1 expenses={data.expenses} />, document.querySelector("#expenses")
+        );
+    });
+}
 
 const setup = function(csrf) {
     ReactDOM.render(

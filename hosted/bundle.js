@@ -82,8 +82,7 @@ var handleEditExpense = function handleEditExpense(e) {
   ReactDOM.render( /*#__PURE__*/React.createElement(EditExpenseForm, {
     csrf: csrf,
     id: id
-  }), document.getElementById("".concat(id)) //`[id='${id}'`
-  );
+  }), document.getElementById("".concat(id)));
 };
 
 var handleEditExpenseDatabase = function handleEditExpenseDatabase(e) {
@@ -95,9 +94,8 @@ var handleEditExpenseDatabase = function handleEditExpenseDatabase(e) {
   }
 
   sendAjax('POST', $("#editexpenseForm").attr("action"), $("#editexpenseForm").serialize(), function () {
-    loadExpenseFromServer();
+    loadExpense();
   });
-  loadExpenseFromServer();
   return false;
 };
 
@@ -423,6 +421,55 @@ var loadBudgetFromServer = function loadBudgetFromServer() {
 var loadExpenseFromServer = function loadExpenseFromServer() {
   sendAjax('GET', '/getExpense', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
+      expenses: data.expenses
+    }), document.querySelector("#expenses"));
+  });
+};
+
+var loadExpense = function loadExpense() {
+  var ExpenseList1 = function ExpenseList1(props) {
+    if (props.expenses.length === 0) {
+      return (/*#__PURE__*/React.createElement("div", {
+          className: "expenseList"
+        }, /*#__PURE__*/React.createElement("h3", {
+          className: "emptyExpense"
+        }, "No Expenses yet"))
+      );
+    }
+
+    var expenseNodes = props.expenses.map(function (expense) {
+      var necessary;
+      var id = expense._id;
+
+      if (expense.necessary) {
+        necessary = "Yes";
+      } else if (!expense.necessary) {
+        necessary = "No";
+      }
+
+      return (/*#__PURE__*/React.createElement("div", {
+          key: expense._id,
+          className: "expense",
+          id: expense._id
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "expenseItem"
+        }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("span", {
+          className: "expenseCost"
+        }, " Cost: $", expense.cost, " "), /*#__PURE__*/React.createElement("span", {
+          className: "expenseItem"
+        }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
+          className: "expenseItem"
+        }, " Necessary: ", necessary, " "), DeleteExpense(id), EditExpense(id))
+      );
+    });
+    return (/*#__PURE__*/React.createElement("div", {
+        className: "expenseList"
+      }, expenseNodes)
+    );
+  };
+
+  sendAjax('GET', '/getExpense', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList1, {
       expenses: data.expenses
     }), document.querySelector("#expenses"));
   });
