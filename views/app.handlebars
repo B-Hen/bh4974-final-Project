@@ -12,9 +12,17 @@
 </head>
 <body>
   <nav><a href="/login"></a>
-    <div class="navlink"><a href="/logout">Log out</a></div>
+    <div class="navlink"><a id="homeButton" href="/home">Home</a></div>
+    <div class="navlink"><a id="appButton" href="/app">App</a></div>
+    <div class="navlink"><a id="addButton" href="/add">Add</a></div>
+    <div class="navlink"><a id="adminButton" href="/admin">Admin</a></div>
+    <div class="navlink"><a id="logoutButton" href="/logout">Log out</a></div>
   </nav>
+  <div id="container">
+  <p id="appMessage"></p>
   <h3><span id="errorMessage"></span></h3>
+  <section id="home"></section>
+  <section id="app"></section>
   <section id="makeBudget">
   </section>
   <section id="makeExpense">
@@ -23,6 +31,7 @@
   </section>
     <section id="expenses">
   </section>
+  </div>
   <script src="/assets/bundle.js"></script>
 </body>
 </html>

@@ -1,5 +1,8 @@
 "use strict";
 
+var _csrf = 0;
+var isThereABudget = false;
+
 var handleBudget = function handleBudget(e) {
   e.preventDefault();
 
@@ -8,9 +11,19 @@ var handleBudget = function handleBudget(e) {
     return false;
   }
 
-  sendAjax('POST', $("#BudgetForm").attr("action"), $("#BudgetForm").serialize(), function () {
-    loadBudgetFromServer();
-  });
+  loadBudgetFromServerAdd();
+  console.log(isThereABudget);
+
+  if (!isThereABudget) {
+    sendAjax('POST', $("#BudgetForm").attr("action"), $("#BudgetForm").serialize(), function () {
+      console.log("worked");
+    });
+    isThereABudget = true;
+    document.querySelector("#errorMessage").innerHTML = "Budget has been added!";
+  } else {
+    document.querySelector("#errorMessage").innerHTML = "You already made a budget, go to admin page to update it!";
+  }
+
   return false;
 };
 
@@ -23,25 +36,29 @@ var handleExpense = function handleExpense(e) {
   }
 
   sendAjax('POST', $("#expenseForm").attr("action"), $("#expenseForm").serialize(), function () {
-    loadExpenseFromServer();
+    console.log("worked");
+    document.querySelector("#errorMessage").innerHTML = "Expense has been added!";
   });
   return false;
 };
 
 var handleDeleteBudget = function handleDeleteBudget(e) {
-  e.preventDefault();
-  var csrf = document.querySelector('input[name="_csrf"]').value;
+  e.preventDefault(); //const csrf = document.querySelector('input[name="_csrf"]').value;
+
+  var csrf = _csrf;
   var id = e.currentTarget.getAttribute('name');
   var deleteData = "_csrf=".concat(csrf, "&budgetId=").concat(id);
   sendAjax('POST', $("#budgetDelete").attr("action"), deleteData, function () {
     loadBudgetFromServer();
+    isThereABudget = false;
   });
   return false;
 };
 
 var handleUpdateBudget = function handleUpdateBudget(e) {
-  e.preventDefault();
-  var csrf = document.querySelector('input[name="_csrf"]').value;
+  e.preventDefault(); //const csrf = document.querySelector('input[name="_csrf"]').value;
+
+  var csrf = _csrf;
   var id = e.currentTarget.getAttribute('name');
   ReactDOM.render( /*#__PURE__*/React.createElement(UpdateBudgetForm, {
     csrf: csrf,
@@ -64,8 +81,9 @@ var handleBudgetUpdateDatabase = function handleBudgetUpdateDatabase(e) {
 };
 
 var handleDeleteExpense = function handleDeleteExpense(e) {
-  e.preventDefault();
-  var csrf = document.querySelector('input[name="_csrf"]').value;
+  e.preventDefault(); //const csrf = document.querySelector('input[name="_csrf"]').value;
+
+  var csrf = _csrf;
   var id = e.currentTarget.getAttribute('name');
   var deleteData = "_csrf=".concat(csrf, "&expenseId=").concat(id);
   sendAjax('POST', $("#expenseDelete").attr("action"), deleteData, function () {
@@ -75,8 +93,9 @@ var handleDeleteExpense = function handleDeleteExpense(e) {
 };
 
 var handleEditExpense = function handleEditExpense(e) {
-  e.preventDefault();
-  var csrf = document.querySelector('input[name="_csrf"]').value;
+  e.preventDefault(); //const csrf = document.querySelector('input[name="_csrf"]').value;
+
+  var csrf = _csrf;
   var id = e.currentTarget.getAttribute('name');
   console.log(id);
   ReactDOM.render( /*#__PURE__*/React.createElement(EditExpenseForm, {
@@ -369,6 +388,32 @@ var BudgetList = function BudgetList(props) {
   );
 };
 
+var BudgetListApp = function BudgetListApp(props) {
+  if (props.budgets.length === 0) {
+    return (/*#__PURE__*/React.createElement("div", {
+        className: "budgetList"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "emptyBudget"
+      }, "No Budget yet"))
+    );
+  }
+
+  var budgetNodes = props.budgets.map(function (budget) {
+    var _id = budget._id;
+    return (/*#__PURE__*/React.createElement("div", {
+        key: budget._id,
+        className: "budget"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "budgetBudget"
+      }, " Budget: ", budget.budget, " "))
+    );
+  });
+  return (/*#__PURE__*/React.createElement("div", {
+      className: "budgetList"
+    }, budgetNodes)
+  );
+};
+
 var ExpenseList = function ExpenseList(props) {
   if (props.expenses.length === 0) {
     return (/*#__PURE__*/React.createElement("div", {
@@ -410,6 +455,47 @@ var ExpenseList = function ExpenseList(props) {
   );
 };
 
+var ExpenseListApp = function ExpenseListApp(props) {
+  if (props.expenses.length === 0) {
+    return (/*#__PURE__*/React.createElement("div", {
+        className: "expenseList"
+      }, /*#__PURE__*/React.createElement("h3", {
+        className: "emptyExpense"
+      }, "No Expenses yet"))
+    );
+  }
+
+  var expenseNodes = props.expenses.map(function (expense) {
+    var necessary;
+    var id = expense._id;
+
+    if (expense.necessary) {
+      necessary = "Yes";
+    } else if (!expense.necessary) {
+      necessary = "No";
+    }
+
+    return (/*#__PURE__*/React.createElement("div", {
+        key: expense._id,
+        className: "expense",
+        id: expense._id
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "expenseItem"
+      }, " Item: ", expense.item, " "), /*#__PURE__*/React.createElement("span", {
+        className: "expenseCost"
+      }, " Cost: $", expense.cost, " "), /*#__PURE__*/React.createElement("span", {
+        className: "expenseItem"
+      }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
+        className: "expenseItem"
+      }, " Necessary: ", necessary, " "))
+    );
+  });
+  return (/*#__PURE__*/React.createElement("div", {
+      className: "expenseList"
+    }, expenseNodes)
+  );
+};
+
 var loadBudgetFromServer = function loadBudgetFromServer() {
   sendAjax('GET', '/getBudget', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
@@ -418,9 +504,64 @@ var loadBudgetFromServer = function loadBudgetFromServer() {
   });
 };
 
+var loadBudgetFromServerApp = function loadBudgetFromServerApp() {
+  var budget;
+  var month = 0,
+      week = 0,
+      day = 0;
+  var totalSpent = 0,
+      moneyLeftToSpend = 0;
+  var expenses;
+  sendAjax('GET', '/getBudget', null, function (data) {
+    budget = data.budgets;
+    console.log(budget);
+
+    if (budget.length > 0) {
+      budget = data.budgets[0].budget;
+      sendAjax('GET', '/getExpense', null, function (data) {
+        expenses = data.expenses;
+        console.log(expenses);
+
+        for (var i = 0; i < expenses.length; i++) {
+          totalSpent += expenses[i].cost;
+        }
+
+        moneyLeftToSpend = budget - totalSpent;
+        month = budget - totalSpent;
+        week = (budget - totalSpent) / 4;
+        day = (budget - totalSpent) / 30;
+        console.log(month + " " + week + " " + day);
+        document.querySelector("#appMessage").innerHTML = "Budget: $".concat(budget.toFixed(2), " | Total Spent: $").concat(totalSpent.toFixed(2), " | Money left to spend: $").concat(moneyLeftToSpend.toFixed(2), "\n                <br>Left for the month: $").concat(month.toFixed(2), " | Left for the week: $").concat(week.toFixed(2), "  |  Left for the day: $").concat(day.toFixed(2));
+      });
+    }
+
+    ReactDOM.render( /*#__PURE__*/React.createElement(BudgetListApp, {
+      budgets: data.budgets
+    }), document.querySelector("#budgets"));
+  });
+};
+
+var loadBudgetFromServerAdd = function loadBudgetFromServerAdd() {
+  sendAjax('GET', '/getBudget', null, function (data) {
+    console.log(data.budgets.length);
+
+    if (data.budgets.length == 1) {
+      isThereABudget = true;
+    }
+  });
+};
+
 var loadExpenseFromServer = function loadExpenseFromServer() {
   sendAjax('GET', '/getExpense', null, function (data) {
     ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
+      expenses: data.expenses
+    }), document.querySelector("#expenses"));
+  });
+};
+
+var loadExpenseFromServerApp = function loadExpenseFromServerApp() {
+  sendAjax('GET', '/getExpense', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseListApp, {
       expenses: data.expenses
     }), document.querySelector("#expenses"));
   });
@@ -475,21 +616,109 @@ var loadExpense = function loadExpense() {
   });
 };
 
-var setup = function setup(csrf) {
-  ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
-    budgets: []
-  }), document.querySelector("#budgets"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
-    expenses: []
-  }), document.querySelector("#expenses"));
+var Home = function Home(props) {
+  return (/*#__PURE__*/React.createElement("div", {
+      id: "app"
+    }, /*#__PURE__*/React.createElement("h1", null, "Welcome to the Budget and Expense Tracker App"), /*#__PURE__*/React.createElement("p", null, "Head to the Edit Tab to enter a Budget and some expenses!"), /*#__PURE__*/React.createElement("p", null, "Head to the App Page to see those Buget and Expenses that you made before"), /*#__PURE__*/React.createElement("p", null, "Head to Admin to look at all the Expense and Budgets"), /*#__PURE__*/React.createElement("p", null, "And don't forget to logout when done :)"), /*#__PURE__*/React.createElement("input", {
+      type: "hidden",
+      name: "_csrf",
+      value: props
+    }))
+  );
+};
+
+var createAppWindow = function createAppWindow(csrf) {
+  loadBudgetFromServerApp();
+  loadExpenseFromServerApp();
+  document.querySelector("#errorMessage").innerHTML = "";
+  ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeExpense"));
+};
+
+var createAddWindow = function createAddWindow(csrf) {
+  document.querySelector("#appMessage").innerHTML = "";
   ReactDOM.render( /*#__PURE__*/React.createElement(BudgetForm, {
     csrf: csrf
   }), document.querySelector("#makeBudget"));
   ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseForm, {
     csrf: csrf
   }), document.querySelector("#makeExpense"));
+  document.querySelector("#errorMessage").innerHTML = "";
+  ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#budgets"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#expenses"));
+};
+
+var createHomeWindow = function createHomeWindow(csrf) {
+  document.querySelector("#appMessage").innerHTML = "";
+  ReactDOM.render( /*#__PURE__*/React.createElement(Home, {
+    csrf: csrf
+  }), document.querySelector("#home"));
+  document.querySelector("#errorMessage").innerHTML = "";
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeExpense"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#budgets"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#expenses"));
+};
+
+var createAdminWindodw = function createAdminWindodw(csrf) {
+  document.querySelector("#appMessage").innerHTML = "";
+  ReactDOM.render( /*#__PURE__*/React.createElement(BudgetList, {
+    budgets: []
+  }), document.querySelector("#budgets"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseList, {
+    expenses: []
+  }), document.querySelector("#expenses"));
   loadBudgetFromServer();
   loadExpenseFromServer();
+  document.querySelector("#errorMessage").innerHTML = "";
+  ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeExpense"));
+};
+
+var setup = function setup(csrf) {
+  _csrf = csrf;
+  var homeButton = document.querySelector("#homeButton");
+  var editButton = document.querySelector("#addButton");
+  var appButton = document.querySelector("#appButton");
+  var adminButton = document.querySelector("#adminButton");
+  homeButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createHomeWindow(csrf);
+    return false;
+  });
+  editButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createAddWindow(csrf);
+    return false;
+  });
+  appButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createAppWindow(csrf);
+    return false;
+  });
+  adminButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createAdminWindodw(csrf);
+    return false;
+  });
+  loadBudgetFromServerAdd();
+  createHomeWindow(csrf); // ReactDOM.render(
+  //     <BudgetList budgets={[]} />, document.querySelector("#budgets")
+  // );
+  // ReactDOM.render(
+  //     <ExpenseList expenses={[]} />, document.querySelector("#expenses")
+  // );
+  // ReactDOM.render(
+  //     <BudgetForm csrf={csrf} />, document.querySelector("#makeBudget")
+  // )
+  // ReactDOM.render(
+  //     <ExpenseForm csrf={csrf} />, document.querySelector("#makeExpense")
+  // )
+  // loadBudgetFromServer();
+  // loadExpenseFromServer();
 };
 
 var getToken = function getToken() {
