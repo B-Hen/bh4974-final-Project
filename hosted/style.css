@@ -5,6 +5,7 @@ html, body {
     padding: 0;
     overflow-x: hidden;
     background-color:  #5CDB95;
+    font-family: 'Rubik', sans-serif;
 }
 
 nav {
@@ -42,7 +43,5 @@ nav:nth-child(1) {
 
 #errorMessage {
     font-size: 1.2em;
-    font-weight: bold;
-    color: red;
-    font-style: italic;
+    color: #05386B;
 }

@@ -51,7 +51,7 @@ var handleChangePass = function handleChangePass(e) {
 
   console.log($("#changePasswordForm").serialize());
   sendAjax('POST', $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function () {
-    console.log("sent");
+    document.querySelector("#errorMessage").innerHTML = "Password has been change";
   });
   return false;
 };
@@ -84,6 +84,7 @@ var LoginWindow = function LoginWindow(props) {
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
       className: "formSubmit",
+      id: "loginSubmit",
       type: "submit",
       value: "Sign in"
     }))
@@ -125,6 +126,7 @@ var SignupWindow = function SignupWindow(props) {
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
       className: "formSubmit",
+      id: "signupSubmit",
       type: "submit",
       value: "Sign Up"
     }))
@@ -147,13 +149,6 @@ var ChangePasswordWindow = function ChangePasswordWindow(props) {
       name: "username",
       placeholder: "username"
     }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "pass"
-    }, "Old Password: "), /*#__PURE__*/React.createElement("input", {
-      id: "pass",
-      type: "password",
-      name: "pass",
-      placeholder: "old password"
-    }), /*#__PURE__*/React.createElement("label", {
       htmlFor: "pass2"
     }, "New Password: "), /*#__PURE__*/React.createElement("input", {
       id: "pass2",
@@ -173,6 +168,7 @@ var ChangePasswordWindow = function ChangePasswordWindow(props) {
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
       className: "formSubmit",
+      id: "changePass",
       type: "submit",
       value: "Change Password"
     }))
@@ -196,6 +192,7 @@ var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordButton, {
     csrf: csrf
   }), document.querySelector("#passButton"));
+  document.querySelector("#errorMessage").innerHTML = "";
 };
 
 var createSignupWindow = function createSignupWindow(csrf) {
@@ -205,6 +202,7 @@ var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordButton, {
     csrf: csrf
   }), document.querySelector("#passButton"));
+  document.querySelector("#errorMessage").innerHTML = "";
 };
 
 var createPassWordWindow = function createPassWordWindow(csrf) {
@@ -212,6 +210,7 @@ var createPassWordWindow = function createPassWordWindow(csrf) {
     csrf: csrf
   }), document.querySelector("#content"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#passButton"));
+  document.querySelector("#errorMessage").innerHTML = "";
 };
 
 var setup = function setup(csrf) {

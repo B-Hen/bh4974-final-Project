@@ -55,7 +55,7 @@ const handleChangePass = (e) => {
     console.log($("#changePasswordForm").serialize());
 
     sendAjax('POST', $("#changePasswordForm").attr("action"), $("#changePasswordForm").serialize(), function(){
-        console.log("sent");
+        document.querySelector("#errorMessage").innerHTML = "Password has been change";
     });
 
     return false;
@@ -74,7 +74,7 @@ const LoginWindow = (props) => {
             <label htmlFor="pass">Password: </label>
             <input id="pass" type="password" name="pass" placeholder="password" />
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Sign in" />
+            <input className="formSubmit" id="loginSubmit" type="submit" value="Sign in" />
         </form>
     );
 };
@@ -95,7 +95,7 @@ const SignupWindow = (props) => {
             <label htmlFor="pass2">Password: </label>
             <input id="pass2" type="password" name="pass2" placeholder="retype password" />
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Sign Up" />
+            <input className="formSubmit" id="signupSubmit" type="submit" value="Sign Up" />
         </form>
     );
 };
@@ -111,14 +111,12 @@ const ChangePasswordWindow = (props) => {
         >
             <label htmlFor="username">Username: </label>
             <input id="user" type="text" name="username" placeholder="username" />
-            <label htmlFor="pass">Old Password: </label>
-            <input id="pass" type="password" name="pass" placeholder="old password" />
             <label htmlFor="pass2">New Password: </label>
             <input id="pass2" type="password" name="pass2" placeholder="new password" />
             <label htmlFor="pass3">New Password: </label>
             <input id="pass3" type="password" name="pass3" placeholder="retype new password" />
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="formSubmit" type="submit" value="Change Password" />
+            <input className="formSubmit" id="changePass" type="submit" value="Change Password" />
         </form>
     );
 };
@@ -146,6 +144,8 @@ const createLoginWindow = (csrf) => {
         <ChangePasswordButton csrf={csrf} />,
         document.querySelector("#passButton")
     )
+
+    document.querySelector("#errorMessage").innerHTML = "";
 };
 
 const createSignupWindow = (csrf) => {
@@ -158,6 +158,7 @@ const createSignupWindow = (csrf) => {
         <ChangePasswordButton csrf={csrf} />,
         document.querySelector("#passButton")
     );
+    document.querySelector("#errorMessage").innerHTML = "";
 };
 
 const createPassWordWindow = (csrf) => {
@@ -167,6 +168,7 @@ const createPassWordWindow = (csrf) => {
     );
 
     ReactDOM.unmountComponentAtNode(document.querySelector("#passButton"));
+    document.querySelector("#errorMessage").innerHTML = "";
 };
 
 const setup = (csrf) => {

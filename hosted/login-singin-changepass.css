@@ -1,0 +1,49 @@
+input {
+    width: 20vw;
+    height: 5vh;
+    border-radius: 5vw;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5vw;
+    padding-left: 1vw;
+    padding-top: 0.5vh;
+}
+
+label {
+    font-size: 1.5vw;
+}
+
+#loginSubmit, #signupSubmit{
+    padding-left: 7vw;
+}
+
+.formSubmit{
+    margin-top: 2vh;
+    font-size: 1.5vw;
+    padding-left: 3.7vw;
+    padding-top: 0.8vh;
+}
+
+.formSubmit:hover{
+    background-color: #05386B;
+    color: #EDF5E1;
+}
+
+#LoginForm, #signupForm, #changePasswordForm{
+    margin-left: 40vw;
+    margin-top: 10vh;
+}
+
+.changePasswordButton{
+    width: 20vw;
+    height: 5vh;
+    border-radius: 5vw;
+    font-size: 1.5vw;
+    padding-top: 0.5vh;
+    margin-left: 40vw;
+}
+
+button:hover{
+    background-color: #05386B;
+    color: #EDF5E1;
+}
