@@ -1,0 +1,131 @@
+h1{
+    font-size: 3vw;
+}
+
+#container{
+    margin-left: 1.5vw;
+}
+
+p{
+    font-size: 1.3vw;
+}
+
+.expense{
+    background-color: #EDF5E1;
+    position: relative;
+    height: 250px;
+    width: 250px;
+    float: left;
+    border:3px solid #379683;
+    border-radius: 10px;
+    padding:5px;
+    margin-bottom:10px;
+    margin-top: 3vh;
+    margin-right: 1.5vw;
+    border-radius: 1vw;
+    transition: transform .3s;
+
+}
+
+.expense span{
+    padding-top: 1vh;
+    font-size:15px;
+    display:flex;
+    flex-direction: column;
+    font-size: 1vw;
+}
+
+.expense:hover{
+    transform: scale(2); 
+    box-shadow: -5px 10px 3px #05386B;
+    z-index: 10;
+}
+
+
+#appMessage{
+    text-align:center;
+    font-size: 2vw;
+}
+
+h3{
+    margin-left: 0.3vw;
+    font-size: 1.5vw;
+}
+
+input, select {
+    width: 20vw;
+    height: 5vh;
+    border-radius: 5vw;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5vw;
+    padding-left: 1vw;
+    
+}
+
+label {
+    font-size: 1.5vw;
+}
+
+#expenseForm{
+    margin-left: 38vw;
+    margin-top: 5vh;
+}
+
+#budgetForm{
+    margin-left: 38vw;
+    margin-top: 10vh;
+}
+
+.makeBudgetSubmit{
+    margin-top: 2vh;
+    font-size: 1.5vw;
+    padding-left: 5.3vw;
+    padding-top: 0.5vh;
+}
+
+.makeExpenseSubmit{
+    margin-top: 2vh;
+    font-size: 1.5vw;
+    padding-left: 5vw;
+    padding-top: 0.5vh;
+}
+
+.makeBudgetSubmit:hover, .makeExpenseSubmit:hover, .editExpenseSubmit:hover{
+    background-color: #05386B;
+    color: #EDF5E1;
+}
+
+#budgetDelete, #updateBudget{
+    margin-top: 2vh;
+    font-size: 1.3vw;
+    padding-top: 0.5vh;
+    border-radius: 5vw;;
+}
+
+#expenseDelete, #editExpense{
+    margin-top: 1.5vh;
+    font-size: 1vw;
+    padding-top: 0.5vh;
+    border-radius: 5vw;;
+}
+
+#editexpenseForm input, #editexpenseForm select{
+    width: 10vw;
+    height: 3vh;
+    border-radius: 5vw;
+    display: flex;
+    flex-direction: column;
+    font-size: 1vw;
+    padding-left: 1vw;
+}
+
+#editexpenseForm label{
+    font-size: 1vw;
+}
+
+#budgetDelete:hover, #updateBudget:hover, #expenseDelete:hover, #editExpense:hover{
+    background-color: #05386B;
+    color: #EDF5E1;
+}
+

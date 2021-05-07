@@ -132,8 +132,9 @@ var BudgetForm = function BudgetForm(props) {
       id: "budget",
       type: "number",
       name: "budget",
-      placeholder: "0",
-      min: "0"
+      placeholder: "0.99",
+      min: "0",
+      step: "0.1"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -160,8 +161,9 @@ var UpdateBudgetForm = function UpdateBudgetForm(props) {
       id: "updatebudget",
       type: "number",
       name: "updatebudget",
-      placeholder: "0",
-      min: "0"
+      placeholder: "0.99",
+      min: "0",
+      step: "0.01"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -600,7 +602,7 @@ var loadExpense = function loadExpense() {
           className: "expenseItem"
         }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
           className: "expenseItem"
-        }, " Necessary: ", necessary, " "), DeleteExpense(id), EditExpense(id))
+        }, " Necessary: ", necessary, " "), /*#__PURE__*/React.createElement("span", null, " ", DeleteExpense(id), " "), /*#__PURE__*/React.createElement("span", null, EditExpense(id)))
       );
     });
     return (/*#__PURE__*/React.createElement("div", {

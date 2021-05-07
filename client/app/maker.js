@@ -144,7 +144,7 @@ const BudgetForm = (props) => {
         className="BudgetForm"
         >
             <label htmlFor="Budget">Budget </label>
-            <input id="budget" type="number" name="budget" placeholder="0" min="0" />
+            <input id="budget" type="number" name="budget" placeholder="0.99" min="0" step="0.1"/>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input className="makeBudgetSubmit" type="submit" value="Make Budget" />
         </form>
@@ -161,7 +161,7 @@ const UpdateBudgetForm = (props) => {
         className="UpdateBudgetForm"
         >
             <label htmlFor="Budget">Budget </label>
-            <input id="updatebudget" type="number" name="updatebudget" placeholder="0" min="0" />
+            <input id="updatebudget" type="number" name="updatebudget" placeholder="0.99" min="0" step="0.01"/>
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input type="hidden" name="_id" value={props._id} />
             <input className="makeUpdateBudgetSubmit" type="submit" value="Update Budget" />
@@ -526,8 +526,8 @@ const loadExpense = () => {
                     <span className="expenseCost"> Cost: ${expense.cost} </span>
                     <span className="expenseItem"> Type: {expense.type} </span>
                     <span className="expenseItem"> Necessary: {necessary} </span>
-                    {DeleteExpense(id)}
-                    {EditExpense(id)}
+                    <span> {DeleteExpense(id)} </span>
+                    <span>{EditExpense(id)}</span>
                 </div>
             );
         });
@@ -546,6 +546,9 @@ const loadExpense = () => {
         );
     });
 }
+
+
+
 
 const Home = (props) => {
     return(
