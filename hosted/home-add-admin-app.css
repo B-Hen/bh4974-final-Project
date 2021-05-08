@@ -91,9 +91,16 @@ label {
     padding-top: 0.5vh;
 }
 
-.makeBudgetSubmit:hover, .makeExpenseSubmit:hover, .editExpenseSubmit:hover{
+.makeBudgetSubmit:hover, .makeExpenseSubmit:hover, .editExpenseSubmit:hover, .makeUpdateBudgetSubmit:hover{
     background-color: #05386B;
     color: #EDF5E1;
+}
+
+.makeUpdateBudgetSubmit{
+    margin-top: 2vh;
+    font-size: 1.5vw;
+    padding-left: 5vw;
+    padding-top: 0.5vh;
 }
 
 #budgetDelete, #updateBudget{
@@ -124,7 +131,7 @@ label {
     font-size: 1vw;
 }
 
-#budgetDelete:hover, #updateBudget:hover, #expenseDelete:hover, #editExpense:hover{
+#budgetDelete:hover, #expenseDelete:hover, #editExpense:hover{
     background-color: #05386B;
     color: #EDF5E1;
 }

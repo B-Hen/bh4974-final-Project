@@ -75,7 +75,7 @@ const handleDeleteBudget = (e) => {
  const handleBudgetUpdateDatabase = (e) => {
      e.preventDefault();
 
-     if($("#updatebudget").val() == -1) {
+     if($("#updatebudget").val() == -1 || $("#updatebudget").val() == '') {
         handleError("Budget is required");
         return false;
     }
@@ -161,7 +161,7 @@ const UpdateBudgetForm = (props) => {
         className="UpdateBudgetForm"
         >
             <label htmlFor="Budget">Budget </label>
-            <input id="updatebudget" type="number" name="updatebudget" placeholder="0.99" min="0" step="0.01"/>
+            <input id="updatebudget" type="number" name="updatebudget" placeholder="0.99" min="0" step="0.01" />
             <input type="hidden" name="_csrf" value={props.csrf} />
             <input type="hidden" name="_id" value={props._id} />
             <input className="makeUpdateBudgetSubmit" type="submit" value="Update Budget" />
@@ -369,8 +369,8 @@ const ExpenseList = function(props) {
                 <span className="expenseCost"> Cost: ${expense.cost} </span>
                 <span className="expenseItem"> Type: {expense.type} </span>
                 <span className="expenseItem"> Necessary: {necessary} </span>
-                {DeleteExpense(id)}
-                {EditExpense(id)}
+                <span>{DeleteExpense(id)}</span>
+                <span>{EditExpense(id)}</span>
             </div>
         );
     });

@@ -69,7 +69,7 @@ var handleUpdateBudget = function handleUpdateBudget(e) {
 var handleBudgetUpdateDatabase = function handleBudgetUpdateDatabase(e) {
   e.preventDefault();
 
-  if ($("#updatebudget").val() == -1) {
+  if ($("#updatebudget").val() == -1 || $("#updatebudget").val() == '') {
     handleError("Budget is required");
     return false;
   }
@@ -448,7 +448,7 @@ var ExpenseList = function ExpenseList(props) {
         className: "expenseItem"
       }, " Type: ", expense.type, " "), /*#__PURE__*/React.createElement("span", {
         className: "expenseItem"
-      }, " Necessary: ", necessary, " "), DeleteExpense(id), EditExpense(id))
+      }, " Necessary: ", necessary, " "), /*#__PURE__*/React.createElement("span", null, DeleteExpense(id)), /*#__PURE__*/React.createElement("span", null, EditExpense(id)))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
