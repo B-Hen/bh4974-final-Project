@@ -7,8 +7,8 @@ const loginPage = (req, res) => {
 };
 
 const errorPage = (req, res) => {
-  res.status(400).render('error', {csrfToken: req.csrfToken()});
-}
+  res.status(400).render('error', { csrfToken: req.csrfToken() });
+};
 
 const logout = (req, res) => {
   req.session.destroy();

@@ -629,9 +629,37 @@ var Home = function Home(props) {
   );
 };
 
+var Documentation = function Documentation() {
+  return (/*#__PURE__*/React.createElement("div", {
+      id: "documentation"
+    }, /*#__PURE__*/React.createElement("h1", null, "Documentation"), /*#__PURE__*/React.createElement("h2", null, "Site Purpose"), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "For this project I wanted to expanded my project 1 to include using MongoDB, React, and a MVP model. THe purpose is similiar to the first, the app allows users to enter a budget that is then broken down into how much the user should spend for the month, week, and day. The user will also be able to enter in as many expense they want which is then factor into how they must budget. User can also update that budget anytime they want and edit it, the same with expenses. User can make there own account and if they need to they can also change the password to that account. The purpose of the app is to help user manange and save their money by budgeting and keeping track of their expenses."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Database"), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "This project uses MongoDB to store user accounts, budgets, and expenese. From the database I can pull the user information and display it back to them. I can also use the app to change values of users budgets and edit user expenses, or delete both. All changes are then reflected in the database and stored for future use."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "What went right and what went wrong?"), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "I'll start with what went right :). I was able to fully convert my project 1 to use MongoDB, React, MVP model, etc which was the core. I was also able to update the CSS and in my opinion looks way more modern than my first project and is simpler to look at. I was also able to to make different user accounts that are all to some level secure. I was also able to make it so user can change their passwords and I was able to do it pretty quickly, something I thought would take me a very long time so I am very happy with it. I was also able to display to the user important information about how much they should budget for the month, week, day. But of course there are problems as well. THe biggest is I had so many other finals and projects due at the same time in addition to work so I didn't have tome to implement some cool features. The biggest thing I wanted to add was sorting expenses so that the user can choose what type of data was displayed making it easier to track spending habits. I also thoought of using D3 to make some really nice charts to go with displaying spending habits to make things more user friend, (plus I am learning D3 for another class right now). But I didn't get the time to explore that option. I really like where this project is going so I think over the summer I am going to continue working on it to add those features!"), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "If I continue..."), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "If I continue I really want to add some way to sort the expenese as well as a way to add D3 into the project so I can use graphs to show spending habits making it easier for the user to understand. And if at all possible I think this would be cool to link to an actual bank account and update the expense and such automatically."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Above and Beyond"), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "I think I went above and beyond in the CSS of the app. I think it looks way nicer than in my first project and I think it looks a lot more modern than the first project. I also did all the CSS myself. The design is simple and easy to navigate and once again I was able to add so neat litle animation with the CSS that makes looking throught expense a bit nicer too."), /*#__PURE__*/React.createElement("hr", null), /*#__PURE__*/React.createElement("h2", null, "Resources"), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "CSS and HTML doc: ", /*#__PURE__*/React.createElement("a", {
+      classname: "docLink",
+      href: "https://www.w3schools.com/"
+    }, "w3schools.com")), /*#__PURE__*/React.createElement("p", {
+      "class": "Doc"
+    }, "MongoDB doc: ", /*#__PURE__*/React.createElement("a", {
+      classname: "docLink",
+      href: "https://docs.mongodb.com/"
+    }, "docs.mongodb.com")))
+  );
+};
+
 var createAppWindow = function createAppWindow(csrf) {
   loadBudgetFromServerApp();
   loadExpenseFromServerApp();
+  ReactDOM.unmountComponentAtNode(document.querySelector("#doc"));
   document.querySelector("#errorMessage").innerHTML = "";
   ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
@@ -646,6 +674,7 @@ var createAddWindow = function createAddWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(ExpenseForm, {
     csrf: csrf
   }), document.querySelector("#makeExpense"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#doc"));
   document.querySelector("#errorMessage").innerHTML = "";
   ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#budgets"));
@@ -657,11 +686,23 @@ var createHomeWindow = function createHomeWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Home, {
     csrf: csrf
   }), document.querySelector("#home"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#doc"));
   document.querySelector("#errorMessage").innerHTML = "";
   ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#makeExpense"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#budgets"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#expenses"));
+};
+
+var createDocumentationWindow = function createDocumentationWindow() {
+  ReactDOM.render( /*#__PURE__*/React.createElement(Documentation, null), document.querySelector("#doc"));
+  document.querySelector("#appMessage").innerHTML = "";
+  document.querySelector("#errorMessage").innerHTML = "";
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#makeExpense"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#budgets"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#expenses"));
+  ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
 };
 
 var createAdminWindodw = function createAdminWindodw(csrf) {
@@ -674,6 +715,7 @@ var createAdminWindodw = function createAdminWindodw(csrf) {
   }), document.querySelector("#expenses"));
   loadBudgetFromServer();
   loadExpenseFromServer();
+  ReactDOM.unmountComponentAtNode(document.querySelector("#doc"));
   document.querySelector("#errorMessage").innerHTML = "";
   ReactDOM.unmountComponentAtNode(document.querySelector("#home"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#makeBudget"));
@@ -686,6 +728,7 @@ var setup = function setup(csrf) {
   var editButton = document.querySelector("#addButton");
   var appButton = document.querySelector("#appButton");
   var adminButton = document.querySelector("#adminButton");
+  var docButton = document.querySelector("#documentationButton");
   homeButton.addEventListener("click", function (e) {
     e.preventDefault();
     createHomeWindow(csrf);
@@ -704,6 +747,11 @@ var setup = function setup(csrf) {
   adminButton.addEventListener("click", function (e) {
     e.preventDefault();
     createAdminWindodw(csrf);
+    return false;
+  });
+  docButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createDocumentationWindow();
     return false;
   });
   loadBudgetFromServerAdd();
