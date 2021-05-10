@@ -37,7 +37,7 @@ p{
 }
 
 .expense:hover{
-    transform: scale(2); 
+    transform: scale(1.2); 
     box-shadow: -5px 10px 3px #05386B;
     z-index: 10;
 }
@@ -83,6 +83,7 @@ label {
     font-size: 1.5vw;
     padding-left: 5.3vw;
     padding-top: 0.5vh;
+    background-color: #EDF5E1;
 }
 
 .makeExpenseSubmit{
@@ -90,9 +91,10 @@ label {
     font-size: 1.5vw;
     padding-left: 5vw;
     padding-top: 0.5vh;
+    background-color: #EDF5E1;
 }
 
-.makeBudgetSubmit:hover, .makeExpenseSubmit:hover, .editExpenseSubmit:hover, .makeUpdateBudgetSubmit:hover{
+.makeBudgetSubmit:hover, .makeExpenseSubmit:hover, .editExpenseSubmit:hover, .makeUpdateBudgetSubmit:hover, .updateBudget:hover{
     background-color: #05386B;
     color: #EDF5E1;
 }
@@ -102,20 +104,23 @@ label {
     font-size: 1.5vw;
     padding-left: 5vw;
     padding-top: 0.5vh;
+    background-color: #EDF5E1;
 }
 
 #budgetDelete, #updateBudget{
     margin-top: 2vh;
     font-size: 1.3vw;
     padding-top: 0.5vh;
-    border-radius: 5vw;;
+    border-radius: 5vw;
+    background-color: #EDF5E1;
 }
 
 #expenseDelete, #editExpense{
     margin-top: 1.5vh;
     font-size: 1vw;
     padding-top: 0.5vh;
-    border-radius: 5vw;;
+    border-radius: 5vw;
+    background-color: #EDF5E1;
 }
 
 #editexpenseForm input, #editexpenseForm select{
@@ -153,4 +158,8 @@ p a:hover{
 
 p a:active{
     color:#05386B;
+}
+
+.editExpenseSubmmit{
+    background-color: #EDF5E1;
 }

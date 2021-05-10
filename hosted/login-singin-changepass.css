@@ -22,6 +22,7 @@ label {
     font-size: 1.5vw;
     padding-left: 3.7vw;
     padding-top: 0.8vh;
+    background-color: #EDF5E1;
 }
 
 .formSubmit:hover{
@@ -41,6 +42,7 @@ label {
     font-size: 1.5vw;
     padding-top: 0.5vh;
     margin-left: 40vw;
+    background-color: #EDF5E1;
 }
 
 button:hover{

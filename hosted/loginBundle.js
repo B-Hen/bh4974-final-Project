@@ -1,51 +1,55 @@
 "use strict";
 
+//method to send a login to the server throw error when feilds are missing or not matching
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
 
   if ($("#user").val() == '' || $("#pass").val() == '') {
-    handleError("RAWR! Username or password is empty");
+    handleError("Username or password is empty");
     return false;
   }
 
   console.log($("input[name=_csrf]").val());
   sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
   return false;
-};
+}; //method to send a new account to the server throw error when feilds are missing or not matching
+
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("All fields are required");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("Passwords do not match");
     return false;
   }
 
   sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
   return false;
-};
+}; //method to send a new passwaor to the server and database throw error when feilds are missing or not matching
+
 
 var handleChangePassword = function handleChangePassword(e) {
   e.preventDefault();
   var csrf = document.querySelector('input[name="_csrf"]').value;
   createPassWordWindow(csrf);
-};
+}; //function to change a password and throw error when new pass not matching and fields are missing 
+
 
 var handleChangePass = function handleChangePass(e) {
   e.preventDefault();
 
   if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+    handleError("All fields are required");
     return false;
   }
 
   if ($("#pass2").val() !== $("#pass3").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("Passwords do not match");
     return false;
   }
 
@@ -54,7 +58,8 @@ var handleChangePass = function handleChangePass(e) {
     document.querySelector("#errorMessage").innerHTML = "Password has been change";
   });
   return false;
-};
+}; //react componet for Login for the site 
+
 
 var LoginWindow = function LoginWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
@@ -89,7 +94,8 @@ var LoginWindow = function LoginWindow(props) {
       value: "Sign in"
     }))
   );
-};
+}; //react component for sign up window of the site 
+
 
 var SignupWindow = function SignupWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
@@ -131,7 +137,8 @@ var SignupWindow = function SignupWindow(props) {
       value: "Sign Up"
     }))
   );
-};
+}; //react compenet for change password window for the site 
+
 
 var ChangePasswordWindow = function ChangePasswordWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
@@ -173,7 +180,8 @@ var ChangePasswordWindow = function ChangePasswordWindow(props) {
       value: "Change Password"
     }))
   );
-};
+}; //method to change the password 
+
 
 var ChangePasswordButton = function ChangePasswordButton(props) {
   return (/*#__PURE__*/React.createElement("button", {
@@ -183,7 +191,8 @@ var ChangePasswordButton = function ChangePasswordButton(props) {
       className: "changePasswordButton"
     }, "Change Password")
   );
-};
+}; //method to creat a login for the site usinf reactDOM
+
 
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
@@ -193,7 +202,8 @@ var createLoginWindow = function createLoginWindow(csrf) {
     csrf: csrf
   }), document.querySelector("#passButton"));
   document.querySelector("#errorMessage").innerHTML = "";
-};
+}; //function to creat signup for the site with REACTDOM 
+
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
@@ -203,7 +213,8 @@ var createSignupWindow = function createSignupWindow(csrf) {
     csrf: csrf
   }), document.querySelector("#passButton"));
   document.querySelector("#errorMessage").innerHTML = "";
-};
+}; //function to create password for the site using REACTDOM
+
 
 var createPassWordWindow = function createPassWordWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(ChangePasswordWindow, {
@@ -211,7 +222,8 @@ var createPassWordWindow = function createPassWordWindow(csrf) {
   }), document.querySelector("#content"));
   ReactDOM.unmountComponentAtNode(document.querySelector("#passButton"));
   document.querySelector("#errorMessage").innerHTML = "";
-};
+}; //function to set up intial state of the site, give buttons function and have alnading page 
+
 
 var setup = function setup(csrf) {
   var loginButton = document.querySelector("#loginButton");
@@ -233,7 +245,8 @@ var setup = function setup(csrf) {
     return false;
   });
   createLoginWindow(csrf); //default view
-};
+}; //function to get a csrf token 
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {

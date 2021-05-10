@@ -1,8 +1,9 @@
+//method to send a login to the server throw error when feilds are missing or not matching
 const handleLogin = (e) => {
     e.preventDefault();
 
     if($("#user").val() == '' || $("#pass").val() == '') {
-        handleError("RAWR! Username or password is empty");
+        handleError("Username or password is empty");
         return false;
     }
     
@@ -13,16 +14,17 @@ const handleLogin = (e) => {
     return false;
 };
 
+//method to send a new account to the server throw error when feilds are missing or not matching
 const handleSignup = (e) => {
     e.preventDefault();
 
     if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        handleError("RAWR! All fields are required");
+        handleError("All fields are required");
         return false;
     }
 
     if($("#pass").val() !== $("#pass2").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleError("Passwords do not match");
         return false;
     }
 
@@ -31,6 +33,7 @@ const handleSignup = (e) => {
     return false;
 };
 
+//method to send a new passwaor to the server and database throw error when feilds are missing or not matching
 const handleChangePassword = (e) => {
     e.preventDefault();
 
@@ -39,16 +42,17 @@ const handleChangePassword = (e) => {
     createPassWordWindow(csrf);
 };
 
+//function to change a password and throw error when new pass not matching and fields are missing 
 const handleChangePass = (e) => {
     e.preventDefault();
 
     if($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-        handleError("RAWR! All fields are required");
+        handleError("All fields are required");
         return false;
     }
 
     if($("#pass2").val() !== $("#pass3").val()) {
-        handleError("RAWR! Passwords do not match");
+        handleError("Passwords do not match");
         return false;
     }
 
@@ -61,6 +65,7 @@ const handleChangePass = (e) => {
     return false;
 }
 
+//react componet for Login for the site 
 const LoginWindow = (props) => {
     return (
         <form id="loginForm" name="loginForm"
@@ -79,6 +84,8 @@ const LoginWindow = (props) => {
     );
 };
 
+
+//react component for sign up window of the site 
 const SignupWindow = (props) => {
     return (
         <form id="signupForm"
@@ -100,6 +107,7 @@ const SignupWindow = (props) => {
     );
 };
 
+//react compenet for change password window for the site 
 const ChangePasswordWindow = (props) => {
     return (
         <form id="changePasswordForm"
@@ -121,6 +129,7 @@ const ChangePasswordWindow = (props) => {
     );
 };
 
+//method to change the password 
 const ChangePasswordButton = (props) => {
     return (
         <button 
@@ -134,6 +143,7 @@ const ChangePasswordButton = (props) => {
     )
 }
 
+//method to creat a login for the site usinf reactDOM
 const createLoginWindow = (csrf) => {
     ReactDOM.render(
         <LoginWindow csrf={csrf} />,
@@ -148,6 +158,7 @@ const createLoginWindow = (csrf) => {
     document.querySelector("#errorMessage").innerHTML = "";
 };
 
+//function to creat signup for the site with REACTDOM 
 const createSignupWindow = (csrf) => {
     ReactDOM.render(
         <SignupWindow csrf={csrf} />,
@@ -161,6 +172,8 @@ const createSignupWindow = (csrf) => {
     document.querySelector("#errorMessage").innerHTML = "";
 };
 
+
+//function to create password for the site using REACTDOM
 const createPassWordWindow = (csrf) => {
     ReactDOM.render(
         <ChangePasswordWindow csrf={csrf} />,
@@ -171,6 +184,7 @@ const createPassWordWindow = (csrf) => {
     document.querySelector("#errorMessage").innerHTML = "";
 };
 
+//function to set up intial state of the site, give buttons function and have alnading page 
 const setup = (csrf) => {
     const loginButton = document.querySelector("#loginButton");
     const signuputton = document.querySelector("#signupButton");
@@ -198,6 +212,7 @@ const setup = (csrf) => {
     createLoginWindow(csrf); //default view
 };
 
+//function to get a csrf token 
 const getToken = () => {
     sendAjax('GET', '/getToken', null, (result) => {
         setup(result.csrfToken);
